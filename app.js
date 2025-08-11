@@ -1,24 +1,28 @@
 // ======= Inicialización segura =======
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ======= Configuración Firebase =======
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  // ======= Firebase =======
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCIra7bW5kBj3ynwsAf-H-c97vWgptfnaE",
-    authDomain: "appreciclaje-b7b2a.firebaseapp.com",
-    projectId: "appreciclaje-b7b2a",
-    storageBucket: "appreciclaje-b7b2a.firebasestorage.app",
-    messagingSenderId: "675875410563",
-    appId: "1:675875410563:web:33fdc6cd93cbd6950381b6",
-    measurementId: "G-VSR34TZDW1"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyDldwAinbDTnq9MCJSbRn_VwiFI_0doQNg",
+  authDomain: "reciclapp-40cc3.firebaseapp.com",
+  projectId: "reciclapp-40cc3",
+  storageBucket: "reciclapp-40cc3.appspot.com", // corregido
+  messagingSenderId: "660641469771",
+  appId: "1:660641469771:web:102ee2a2885147e7d5c4ce",
+  measurementId: "G-DERT7TM0N4"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 
   // ======= DOM Elements =======
   const authScreen = document.getElementById("auth-screen");
