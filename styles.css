@@ -1,163 +1,56 @@
-/* ===== Reset básico ===== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* styles.css - simple y moderno (ambientalista) */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html,body,#app,#auth-screen { height: 100%; }
+body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
 
-html, body {
-  height: 100%;
-  font-family: 'Inter', sans-serif;
-}
-
-/* ===== Utilidades base ===== */
+/* Inputs & buttons */
 .input {
   width: 100%;
   padding: 0.6rem 0.8rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.6rem;
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.2s ease;
 }
-
-.input:focus {
-  border-color: #10b981; /* verde */
-  box-shadow: 0 0 0 2px rgba(16,185,129,0.2);
-}
+.input:focus { box-shadow: 0 0 0 4px rgba(16,185,129,0.08); border-color: #10b981; }
 
 .btn-primary {
-  background: linear-gradient(90deg, #059669, #10b981);
+  background: linear-gradient(90deg,#059669,#10b981);
   color: white;
-  font-weight: 500;
   padding: 0.6rem 1rem;
-  border-radius: 0.5rem;
-  transition: background 0.2s ease, transform 0.1s ease;
+  border-radius: 0.6rem;
+  font-weight: 600;
 }
-
-.btn-primary:hover {
-  background: linear-gradient(90deg, #047857, #059669);
-}
-
-.btn-primary:active {
-  transform: scale(0.97);
-}
+.btn-primary:hover { transform: translateY(-1px); }
 
 .btn-ghost {
   background: transparent;
   color: #059669;
-  font-weight: 500;
+  border-radius: 0.6rem;
   padding: 0.6rem 1rem;
-  border-radius: 0.5rem;
-  transition: background 0.2s ease;
 }
 
-.btn-ghost:hover {
-  background-color: rgba(16,185,129,0.08);
-}
-
+/* Google button */
 .btn-google {
-  background-color: #fff;
-  border: 1px solid #d1d5db;
-  color: #374151;
-  padding: 0.6rem 1rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-google:hover {
-  background-color: #f9fafb;
-}
-
-/* ===== Loading screen ===== */
-#loading-screen {
-  animation: fadeIn 0.4s ease;
-}
-
-/* ===== Auth screen ===== */
-#auth-screen {
-  background: linear-gradient(to bottom right, #d1fae5, #f0fdf4);
-}
-
-/* ===== App container ===== */
-#app-container {
-  background-color: #f9fafb;
-}
-
-/* ===== Mapa ===== */
-#map-canvas,
-#mini-map {
-  border-radius: 0.75rem;
-}
-
-.leaflet-container {
-  font-family: 'Inter', sans-serif;
-}
-
-.leaflet-routing-container {
   background: white;
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  font-size: 0.8rem;
+  border: 1px solid #e5e7eb;
+  color: #1f2937;
+  padding: 0.6rem;
+  border-radius: 0.6rem;
 }
 
-/* ===== Modal ===== */
-#modal-form {
-  background-color: rgba(0,0,0,0.4);
-}
+/* modal */
+#modal { background: rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center; }
 
-#modal-form .bg-white {
-  animation: scaleIn 0.25s ease;
-}
+/* toast */
+#toast .note { background:white; border-left:4px solid #10b981; padding:0.6rem 0.9rem; border-radius:0.5rem; box-shadow: 0 6px 18px rgba(15,23,42,0.06); margin-top:0.5rem; }
 
-/* ===== Toast ===== */
-#toast .toast-item {
-  background: white;
-  padding: 0.75rem 1rem;
-  margin-top: 0.5rem;
-  border-left: 4px solid #10b981;
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-  animation: slideIn 0.3s ease;
-}
+/* leaflet adjustments */
+.leaflet-container { border-radius: 0.6rem; }
+.leaflet-routing-container { font-size: 0.9rem; border-radius: 0.5rem; }
 
-/* ===== Animaciones ===== */
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-@keyframes scaleIn {
-  from {transform: scale(0.95);}
-  to {transform: scale(1);}
-}
-
-@keyframes slideIn {
-  from {transform: translateX(100%); opacity: 0;}
-  to {transform: translateX(0); opacity: 1;}
-}
-
-/* ===== Responsive ===== */
+/* responsive */
 @media (max-width: 768px) {
-  header .flex {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  #map-canvas {
-    height: 300px;
-  }
-
-  #mini-map {
-    height: 200px;
-  }
-
-  .btn-primary, .btn-ghost, .btn-google {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.85rem;
-  }
+  #map { height: 360px; }
+  .max-w-6xl { padding-left: 1rem; padding-right: 1rem; }
 }
