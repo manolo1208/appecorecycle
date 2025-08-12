@@ -1,42 +1,202 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ReciclApp</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <title>ReciclApp — Recolección Inteligente</title>
+
+  <!-- Tailwind (CDN quick dev) -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+
+  <!-- Leaflet Routing Machine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js" defer></script>
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="./styles.css" />
+
+  <!-- App logic -->
+  <script type="module" src="./app.js" defer></script>
 </head>
-<body class="bg-green-50 min-h-screen flex items-center justify-center">
+<body class="bg-emerald-50 text-slate-800 font-sans antialiased">
 
-  <!-- Pantalla de autenticación -->
-  <div id="auth-screen" class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-    <h1 class="text-2xl font-bold text-green-700 mb-4 text-center">ReciclApp</h1>
-
-    <!-- Login -->
-    <form id="login-form" class="space-y-4">
-      <input id="email-login" type="email" placeholder="Correo electrónico" class="w-full p-2 border rounded" required>
-      <input id="password-login" type="password" placeholder="Contraseña" class="w-full p-2 border rounded" required>
-      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Iniciar sesión</button>
-      <button id="login-google" type="button" class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">Iniciar con Google</button>
-      <p class="text-sm text-center">¿No tienes cuenta? <a href="#" id="show-register" class="text-green-600">Regístrate aquí</a></p>
-    </form>
-
-    <!-- Registro -->
-    <form id="signup-form" class="space-y-4 hidden">
-      <input id="email-register" type="email" placeholder="Correo electrónico" class="w-full p-2 border rounded" required>
-      <input id="password-register" type="password" placeholder="Contraseña" class="w-full p-2 border rounded" required>
-      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">Registrarse</button>
-      <p class="text-sm text-center">¿Ya tienes cuenta? <a href="#" id="show-login" class="text-green-600">Inicia sesión</a></p>
-    </form>
+  <!-- Loading -->
+  <div id="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-b from-emerald-600 to-green-500 text-white">
+    <div class="text-center">
+      <div class="mb-3 text-4xl"><i class="fa-solid fa-recycle fa-spin"></i></div>
+      <h1 class="text-2xl font-bold">ReciclApp</h1>
+      <p class="opacity-90 mt-2">Conectando recicladores y usuarios…</p>
+    </div>
   </div>
 
-  <!-- App -->
-  <div id="app-container" class="hidden w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-    <h1 class="text-xl font-bold text-green-700">Bienvenido a ReciclApp</h1>
-    <p class="mt-2">Aquí podrás gestionar tus solicitudes de recolección.</p>
-    <button id="logout-btn" class="mt-4 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">Cerrar sesión</button>
+  <!-- AUTH SCREEN -->
+  <main id="auth-screen" class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-xl mx-auto">
+      <div class="bg-white rounded-2xl p-6 shadow-lg">
+        <div class="text-center mb-4">
+          <div class="mx-auto w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500 to-green-400 flex items-center justify-center text-white text-2xl">R</div>
+          <h2 class="mt-3 text-2xl font-bold">ReciclApp</h2>
+          <p class="text-sm text-slate-500 mt-1">Solicita recolección y sigue al reciclador en tiempo real</p>
+        </div>
+
+        <!-- LOGIN -->
+        <form id="login-form" class="space-y-3">
+          <input id="email-login" class="input" type="email" placeholder="Correo" required />
+          <input id="password-login" class="input" type="password" placeholder="Contraseña" required />
+          <div class="flex gap-3">
+            <button class="btn-primary flex-1" type="submit">Iniciar sesión</button>
+            <button id="btn-google" class="btn-google flex-1" type="button"><i class="fa-brands fa-google mr-2"></i>Google</button>
+          </div>
+          <div class="text-center text-sm text-slate-500">
+            ¿No tienes cuenta? <button id="show-signup" class="text-emerald-600 font-semibold">Regístrate</button>
+          </div>
+        </form>
+
+        <!-- SIGNUP -->
+        <form id="signup-form" class="space-y-3 hidden mt-4">
+          <input id="name-register" class="input" type="text" placeholder="Nombre completo" required />
+          <input id="email-register" class="input" type="email" placeholder="Correo" required />
+          <input id="password-register" class="input" type="password" placeholder="Contraseña" required />
+          <select id="role-register" class="input" required>
+            <option value="">Selecciona rol</option>
+            <option value="usuario">Usuario</option>
+            <option value="reciclador">Reciclador</option>
+          </select>
+          <div class="flex gap-3">
+            <button class="btn-primary flex-1" type="submit">Crear cuenta</button>
+            <button id="show-login" class="btn-ghost flex-1" type="button">Volver</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- APP CONTAINER -->
+  <div id="app" class="hidden min-h-screen">
+    <!-- HEADER -->
+    <header class="bg-white shadow sticky top-0 z-40">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-emerald-500 to-green-400 flex items-center justify-center text-white font-bold">R</div>
+          <div>
+            <h1 class="text-lg font-bold">ReciclApp</h1>
+            <p class="text-xs text-slate-500">Recolección gratuita · Seguimiento en vivo</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-sm text-slate-600" id="display-name">—</div>
+          <div id="role-badge" class="text-sm px-3 py-1 rounded-full bg-emerald-50 text-emerald-600">—</div>
+          <button id="logout" class="text-slate-600 hover:text-red-500" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- SIDEBAR -->
+      <aside class="col-span-1 space-y-4">
+        <div class="bg-white rounded-2xl p-4 shadow">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-xs text-slate-400">Rol</div>
+              <div id="left-role" class="font-semibold text-emerald-600">—</div>
+            </div>
+            <div><button id="btn-new" class="btn-primary px-3 py-2">+ Solicitar</button></div>
+          </div>
+          <p class="text-sm text-slate-500 mt-2">Solicita la recolección de residuos aprovechables.</p>
+        </div>
+
+        <div id="panel-active" class="bg-white rounded-2xl p-4 shadow">
+          <h3 class="font-semibold">Solicitudes activas</h3>
+          <div id="list-active" class="space-y-2 mt-3"></div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 shadow">
+          <h4 class="font-semibold">Historial</h4>
+          <div id="history" class="mt-3 space-y-2 text-sm text-slate-600"></div>
+        </div>
+      </aside>
+
+      <!-- MAP & FORM -->
+      <section class="col-span-2 space-y-4">
+        <div id="map" class="rounded-2xl border border-slate-200 h-[520px] bg-white"></div>
+
+        <!-- Modal New Request -->
+        <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
+          <div class="bg-white rounded-2xl w-full max-w-3xl p-6 shadow-lg overflow-auto max-h-[90vh]">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-semibold">Nueva Solicitud</h3>
+              <button id="close-modal" class="text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="request-form" class="space-y-4">
+              <div>
+                <label class="text-sm font-medium">Tipo de residuo</label>
+                <select id="res-type" class="input" required>
+                  <option value="">-- Seleccionar --</option>
+                  <optgroup label="Aprovechables">
+                    <option>Cartón</option>
+                    <option>Plástico</option>
+                    <option>Papel</option>
+                    <option>Metales</option>
+                    <option>Vidrio</option>
+                  </optgroup>
+                  <optgroup label="Electrodomésticos">
+                    <option>Nevera</option>
+                    <option>Lavadora</option>
+                    <option>Aire acondicionado</option>
+                  </optgroup>
+                  <option>Otro</option>
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <input id="weight" class="input" type="number" placeholder="Peso (kg)" min="0" />
+                <input id="bags" class="input" type="number" placeholder="Bolsas" min="0" />
+              </div>
+
+              <div>
+                <label class="text-sm font-medium">Foto (opcional)</label>
+                <input id="photo" type="file" accept="image/*" class="mt-2" />
+                <div id="photo-preview" class="mt-3 hidden"><img class="w-full max-h-48 object-cover rounded" alt="preview"/></div>
+              </div>
+
+              <div>
+                <label class="text-sm font-medium">Ubicación (toca en el mapa)</label>
+                <div id="mini-map" class="h-48 rounded border border-slate-200"></div>
+              </div>
+
+              <div>
+                <label class="text-sm font-medium">Tipo de recolección</label>
+                <div class="flex gap-4 mt-2">
+                  <label class="flex items-center gap-2"><input type="radio" name="collect" value="inmediata" checked/>Inmediata</label>
+                  <label class="flex items-center gap-2"><input type="radio" name="collect" value="programada"/>Programada</label>
+                </div>
+                <div id="schedule-fields" class="hidden mt-2">
+                  <input id="date-s" type="date" class="input inline-block w-1/2 mr-2"/>
+                  <input id="time-s" type="time" class="input inline-block w-1/2"/>
+                </div>
+              </div>
+
+              <div class="flex gap-3">
+                <button class="btn-primary flex-1" type="submit">Enviar solicitud</button>
+                <button id="cancel-request" type="button" class="btn-ghost">Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </section>
+    </div>
   </div>
 
-  <script type="module" src="app.js"></script>
+  <!-- Toasts -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50"></div>
+
 </body>
 </html>
