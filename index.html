@@ -1,1274 +1,520 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReciclaBC - Recolección de Reciclaje</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 414px;
-            margin: 0 auto;
-            min-height: 100vh;
-            background: white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            padding: 20px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .recycle-icon {
-            width: 32px;
-            height: 32px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #10b981;
-            font-size: 18px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .notification-btn, .profile-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .notification-btn:hover, .profile-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
-        }
-
-        .login-screen {
-            padding: 40px 30px;
-            text-align: center;
-        }
-
-        .login-form {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin: 20px 0;
-        }
-
-        .form-title {
-            font-size: 24px;
-            margin-bottom: 30px;
-            color: #1f2937;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background: #f9fafb;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #10b981;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .select-field {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 16px;
-            background: #f9fafb;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 15px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-secondary {
-            width: 100%;
-            padding: 16px;
-            background: transparent;
-            color: #6b7280;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-secondary:hover {
-            border-color: #10b981;
-            color: #10b981;
-        }
-
-        .role-selector {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .role-card {
-            flex: 1;
-            padding: 20px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            background: #f9fafb;
-        }
-
-        .role-card.active {
-            border-color: #10b981;
-            background: #ecfdf5;
-        }
-
-        .main-content {
-            padding: 20px;
-        }
-
-        .page-title {
-            font-size: 28px;
-            color: #1f2937;
-            margin-bottom: 10px;
-        }
-
-        .page-subtitle {
-            color: #6b7280;
-            margin-bottom: 30px;
-            font-size: 16px;
-        }
-
-        .tabs {
-            display: flex;
-            background: #f3f4f6;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: #6b7280;
-        }
-
-        .tab.active {
-            background: white;
-            color: #1f2937;
-            font-weight: 600;
-        }
-
-        .new-request-btn {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #1f2937;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
-            border: none;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-
-        .new-request-btn:hover {
-            background: #374151;
-            transform: translateY(-1px);
-        }
-
-        .request-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid #f3f4f6;
-            transition: all 0.3s;
-        }
-
-        .request-card:hover {
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-
-        .request-header {
-            display: flex;
-            justify-content: between;
-            align-items: flex-start;
-            margin-bottom: 15px;
-        }
-
-        .materials {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 5px;
-        }
-
-        .status-badge {
-            background: #fbbf24;
-            color: #92400e;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-left: auto;
-        }
-
-        .status-badge.completed {
-            background: #10b981;
-            color: white;
-        }
-
-        .status-badge.in-progress {
-            background: #3b82f6;
-            color: white;
-        }
-
-        .request-info {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 90%;
-            width: 400px;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: modalSlideIn 0.3s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .close-btn {
-            width: 30px;
-            height: 30px;
-            border: none;
-            background: #f3f4f6;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6b7280;
-        }
-
-        .materials-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .material-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .material-option input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: #10b981;
-        }
-
-        .quantity-selector {
-            margin-bottom: 20px;
-        }
-
-        .map-container {
-            height: 300px;
-            background: #f3f4f6;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            border: 2px dashed #d1d5db;
-        }
-
-        .pickup-points {
-            display: grid;
-            gap: 15px;
-        }
-
-        .pickup-point {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .pickup-point.available {
-            border-color: #10b981;
-            background: #ecfdf5;
-        }
-
-        .pickup-point:hover {
-            border-color: #10b981;
-            transform: translateY(-2px);
-        }
-
-        .point-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .point-materials {
-            font-weight: 600;
-            color: #1f2937;
-        }
-
-        .distance {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .point-info {
-            color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .collect-btn {
-            width: 100%;
-            padding: 10px;
-            background: #10b981;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .notification-panel {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 300px;
-            height: 100vh;
-            background: white;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-            transition: right 0.3s ease;
-            z-index: 1001;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .notification-panel.active {
-            right: 0;
-        }
-
-        .notification-item {
-            background: #f9fafb;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            border-left: 4px solid #10b981;
-        }
-
-        .notification-title {
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 5px;
-        }
-
-        .notification-message {
-            color: #6b7280;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .notification-time {
-            color: #9ca3af;
-            font-size: 12px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .live-tracking {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .tracking-status {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .eta {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                max-width: 100%;
-            }
-            
-            .materials-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ReciclaBC - Recolección de Reciclaje</title>
+  <link rel="manifest" href="#manifest-placeholder" />
+  <meta name="theme-color" content="#10b981" />
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box }
+    body{ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:linear-gradient(135deg,#e8f5e8 0%,#f0f9ff 100%); min-height:100vh }
+    .container{ max-width:414px; margin:0 auto; min-height:100vh; background:#fff; box-shadow:0 0 20px rgba(0,0,0,.1); position:relative; overflow:hidden }
+    .header{ background:linear-gradient(135deg,#10b981 0%,#059669 100%); padding:20px; color:#fff; display:flex; align-items:center; justify-content:space-between; box-shadow:0 4px 12px rgba(16,185,129,.3) }
+    .logo{ display:flex; align-items:center; gap:10px; font-size:24px; font-weight:700 }
+    .recycle-icon{ width:32px; height:32px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#10b981; font-size:18px }
+    .user-info{ display:flex; align-items:center; gap:12px }
+    .notification-btn,.profile-btn{ width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.2); border:none; color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .3s }
+    .notification-btn:hover,.profile-btn:hover{ background:rgba(255,255,255,.3); transform:scale(1.05) }
+    .login-screen{ padding:32px 22px; text-align:center }
+    .login-form{ background:#fff; padding:24px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,.1); margin:18px 0 }
+    .form-title{ font-size:22px; margin-bottom:22px; color:#1f2937; display:flex; align-items:center; gap:10px; justify-content:center }
+    .input-group{ margin-bottom:14px; text-align:left }
+    .input-field,.select-field, textarea.input-field{ width:100%; padding:14px; border:2px solid #e5e7eb; border-radius:12px; font-size:16px; transition:all .3s; background:#f9fafb }
+    .input-field:focus, textarea.input-field:focus{ outline:none; border-color:#10b981; background:#fff; box-shadow:0 0 0 3px rgba(16,185,129,.1) }
+    .select-field{ cursor:pointer }
+    .btn-primary{ width:100%; padding:14px; background:linear-gradient(135deg,#10b981 0%,#059669 100%); color:#fff; border:none; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition:all .3s; margin-bottom:12px }
+    .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 8px 25px rgba(16,185,129,.3) }
+    .btn-secondary{ width:100%; padding:14px; background:transparent; color:#6b7280; border:2px solid #e5e7eb; border-radius:12px; font-size:15px; cursor:pointer; transition:all .3s }
+    .btn-secondary:hover{ border-color:#10b981; color:#10b981 }
+    .role-selector{ display:flex; gap:12px; margin-bottom:12px }
+    .role-card{ flex:1; padding:16px; border:2px solid #e5e7eb; border-radius:12px; cursor:pointer; transition:all .3s; text-align:center; background:#f9fafb }
+    .role-card.active{ border-color:#10b981; background:#ecfdf5 }
+    .main-content{ padding:18px }
+    .page-title{ font-size:24px; color:#1f2937; margin-bottom:6px }
+    .page-subtitle{ color:#6b7280; margin-bottom:18px; font-size:14px }
+    .tabs{ display:flex; background:#f3f4f6; border-radius:12px; margin-bottom:16px; overflow:hidden }
+    .tab{ flex:1; padding:10px; text-align:center; background:transparent; border:none; cursor:pointer; transition:all .3s; color:#6b7280 }
+    .tab.active{ background:#fff; color:#1f2937; font-weight:600 }
+    .new-request-btn{ display:flex; align-items:center; gap:10px; background:#1f2937; color:#fff; padding:10px 16px; border-radius:22px; border:none; font-size:13px; font-weight:600; cursor:pointer; margin-bottom:16px; transition:all .3s }
+    .new-request-btn:hover{ background:#374151; transform:translateY(-1px) }
+    .request-card{ background:#fff; border-radius:15px; padding:16px; margin-bottom:12px; box-shadow:0 4px 15px rgba(0,0,0,.05); border:1px solid #f3f4f6; transition:all .3s }
+    .request-card:hover{ box-shadow:0 8px 25px rgba(0,0,0,.1); transform:translateY(-2px) }
+    .request-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px }
+    .materials{ font-size:16px; font-weight:700; color:#1f2937; margin-bottom:2px }
+    .status-badge{ background:#fbbf24; color:#92400e; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; margin-left:auto }
+    .status-badge.completed{ background:#10b981; color:#fff }
+    .status-badge.in-progress{ background:#3b82f6; color:#fff }
+    .request-info{ display:flex; flex-direction:column; gap:6px; color:#6b7280; font-size:13px }
+    .info-item{ display:flex; align-items:center; gap:8px }
+    .modal{ position:fixed; inset:0; background:rgba(0,0,0,.5); display:none; z-index:1000; align-items:center; justify-content:center; backdrop-filter:blur(5px) }
+    .modal.active{ display:flex }
+    .modal-content{ background:#fff; border-radius:20px; padding:24px; max-width:90%; width:400px; max-height:90vh; overflow-y:auto; animation:modalSlideIn .3s ease-out }
+    @keyframes modalSlideIn{ from{ transform:translateY(-50px); opacity:0 } to{ transform:translateY(0); opacity:1 } }
+    .modal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px }
+    .modal-title{ font-size:18px; font-weight:700; color:#1f2937 }
+    .close-btn{ width:30px; height:30px; border:none; background:#f3f4f6; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#6b7280 }
+    .materials-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px }
+    .material-option{ display:flex; align-items:center; gap:8px }
+    .material-option input[type="checkbox"]{ width:18px; height:18px; accent-color:#10b981 }
+    .quantity-selector{ margin-bottom:12px }
+    .map-container{ height:260px; background:#f3f4f6; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:14px; border:2px dashed #d1d5db; position:relative }
+    .pickup-points{ display:grid; gap:12px }
+    .pickup-point{ background:#fff; border:2px solid #e5e7eb; border-radius:12px; padding:14px; cursor:pointer; transition:all .3s }
+    .pickup-point.available{ border-color:#10b981; background:#ecfdf5 }
+    .pickup-point:hover{ border-color:#10b981; transform:translateY(-2px) }
+    .point-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px }
+    .point-materials{ font-weight:700; color:#1f2937 }
+    .distance{ color:#6b7280; font-size:12px }
+    .point-info{ color:#6b7280; font-size:13px; margin-bottom:6px }
+    .collect-btn{ width:100%; padding:10px; background:#10b981; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:700 }
+    .notification-panel{ position:fixed; top:0; right:-300px; width:300px; height:100vh; background:#fff; box-shadow:-5px 0 15px rgba(0,0,0,.1); transition:right .3s ease; z-index:1001; padding:16px; overflow-y:auto }
+    .notification-panel.active{ right:0 }
+    .notification-item{ background:#f9fafb; padding:12px; border-radius:12px; margin-bottom:10px; border-left:4px solid #10b981 }
+    .notification-title{ font-weight:700; color:#1f2937; margin-bottom:4px }
+    .notification-message{ color:#6b7280; font-size:13px; margin-bottom:4px }
+    .notification-time{ color:#9ca3af; font-size:11px }
+    .hidden{ display:none }
+    .live-tracking{ background:linear-gradient(135deg,#3b82f6 0%,#1d4ed8 100%); color:#fff; padding:12px; border-radius:12px; margin-bottom:14px; text-align:center }
+    .tracking-status{ font-size:16px; font-weight:700; margin-bottom:6px }
+    .eta{ font-size:13px; opacity:.95 }
+    .row{ display:flex; gap:10px }
+    .row .btn-primary, .row .btn-secondary{ flex:1 }
+    .tiny{ font-size:12px; color:#6b7280 }
+    @media (max-width:480px){ .container{ max-width:100% } .materials-grid{ grid-template-columns:1fr } }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Pantalla de Inicio de Sesión -->
-        <div id="loginScreen" class="login-screen">
-            <div class="login-form">
-                <h2 class="form-title">
-                    <div class="recycle-icon">♻</div>
-                    Crear Nuevo Usuario
-                </h2>
-                
-                <div class="role-selector">
-                    <div class="role-card active" data-role="usuario">
-                        <div style="font-size: 24px; margin-bottom: 10px;">👤</div>
-                        <div>Usuario</div>
-                        <small>Solicitar recolección</small>
-                    </div>
-                    <div class="role-card" data-role="reciclador">
-                        <div style="font-size: 24px; margin-bottom: 10px;">🚛</div>
-                        <div>Reciclador</div>
-                        <small>Recoger materiales</small>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" class="input-field" placeholder="Nombre completo" id="nombreCompleto">
-                </div>
-                
-                <div class="input-group">
-                    <input type="email" class="input-field" placeholder="Email" id="email">
-                </div>
-                
-                <div class="input-group">
-                    <input type="tel" class="input-field" placeholder="Teléfono" id="telefono">
-                </div>
-                
-                <div class="input-group">
-                    <select class="select-field" id="usuario">
-                        <option>Usuario</option>
-                        <option>Reciclador</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <input type="text" class="input-field" placeholder="Dirección (opcional)" id="direccion">
-                </div>
-                
-                <button class="btn-primary" onclick="crearUsuario()">Crear Usuario</button>
-                <button class="btn-secondary" onclick="cancelar()">Cancelar</button>
-            </div>
+  <div class="container">
+    <!-- LOGIN / PERFIL -->
+    <div id="loginScreen" class="login-screen">
+      <div class="login-form">
+        <h2 class="form-title"><div class="recycle-icon">♻</div> Crear Nuevo Usuario</h2>
+        <div class="role-selector">
+          <div class="role-card active" data-role="usuario"><div style="font-size:24px;margin-bottom:8px">👤</div><div>Usuario</div><small class="tiny">Solicitar recolección</small></div>
+          <div class="role-card" data-role="reciclador"><div style="font-size:24px;margin-bottom:8px">🚛</div><div>Reciclador</div><small class="tiny">Recoger materiales</small></div>
         </div>
-
-        <!-- Panel Principal -->
-        <div id="mainPanel" class="hidden">
-            <div class="header">
-                <div class="logo">
-                    <div class="recycle-icon">♻</div>
-                    ReciclaBC
-                </div>
-                <div class="user-info">
-                    <button class="notification-btn" onclick="toggleNotifications()">🔔</button>
-                    <button class="profile-btn">👤</button>
-                    <span id="userName">jose</span>
-                </div>
-            </div>
-
-            <!-- Panel de Usuario -->
-            <div id="userPanel" class="main-content">
-                <h1 class="page-title">Panel de Usuario</h1>
-                <p class="page-subtitle">Gestiona tus solicitudes de recolección de reciclaje</p>
-
-                <div class="tabs">
-                    <button class="tab active" onclick="switchTab('misSolicitudes')">Mis Solicitudes</button>
-                    <button class="tab" onclick="switchTab('historial')">Historial</button>
-                </div>
-
-                <div class="live-tracking" id="liveTracking" style="display: none;">
-                    <div class="tracking-status">Reciclador en camino</div>
-                    <div class="eta">Tiempo estimado: 15 minutos</div>
-                    <div style="margin-top: 10px;">📍 A 2.5 km de distancia</div>
-                </div>
-
-                <div id="solicitudesActivas">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h2>Solicitudes Activas</h2>
-                        <button class="new-request-btn" onclick="openModal('newRequestModal')">
-                            <span>⭐</span> Nueva Solicitud
-                        </button>
-                    </div>
-
-                    <div class="request-card">
-                        <div class="request-header">
-                            <div>
-                                <div class="materials">Cartón, Metal</div>
-                                <div class="status-badge">Pendiente</div>
-                            </div>
-                        </div>
-                        <div class="request-info">
-                            <div class="info-item">📍 carrera 33</div>
-                            <div class="info-item">📅 23/8/2025</div>
-                            <div class="info-item">📦 Cantidad: mediana</div>
-                            <div class="info-item">🕕 Hora preferida: 6 am</div>
-                            <div class="info-item">📝 la paz</div>
-                        </div>
-                        <button class="btn-primary" style="margin-top: 15px; padding: 10px;" onclick="startTracking()">
-                            Ver en tiempo real
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Panel de Reciclador -->
-            <div id="recyclerPanel" class="main-content hidden">
-                <h1 class="page-title">Panel de Reciclador</h1>
-                <p class="page-subtitle">Puntos de recolección disponibles</p>
-
-                <div class="map-container">
-                    <div style="text-align: center; color: #6b7280;">
-                        🗺️<br>
-                        Mapa de Barrancabermeja<br>
-                        <small>Mostrando puntos de recolección</small>
-                    </div>
-                </div>
-
-                <div class="pickup-points">
-                    <div class="pickup-point available">
-                        <div class="point-header">
-                            <div class="point-materials">Cartón, Metal</div>
-                            <div class="distance">0.8 km</div>
-                        </div>
-                        <div class="point-info">📍 Carrera 33 - La Paz</div>
-                        <div class="point-info">📦 Cantidad: Mediana</div>
-                        <div class="point-info">🕕 Preferida: 6:00 AM</div>
-                        <div class="point-info">👤 Usuario: Jose</div>
-                        <button class="collect-btn" onclick="acceptCollection(this)">Aceptar Recolección</button>
-                    </div>
-
-                    <div class="pickup-point">
-                        <div class="point-header">
-                            <div class="point-materials">Plástico, Papel</div>
-                            <div class="distance">1.2 km</div>
-                        </div>
-                        <div class="point-info">📍 Calle 45 - Centro</div>
-                        <div class="point-info">📦 Cantidad: Grande</div>
-                        <div class="point-info">🕘 Preferida: 9:00 AM</div>
-                        <div class="point-info">👤 Usuario: María</div>
-                        <button class="collect-btn" onclick="acceptCollection(this)">Aceptar Recolección</button>
-                    </div>
-
-                    <div class="pickup-point">
-                        <div class="point-header">
-                            <div class="point-materials">Aluminio, Pasta</div>
-                            <div class="distance">2.1 km</div>
-                        </div>
-                        <div class="point-info">📍 Barrio El Recreo</div>
-                        <div class="point-info">📦 Cantidad: Pequeña</div>
-                        <div class="point-info">🕐 Preferida: 1:00 PM</div>
-                        <div class="point-info">👤 Usuario: Carlos</div>
-                        <button class="collect-btn" onclick="acceptCollection(this)">Aceptar Recolección</button>
-                    </div>
-                </div>
-            </div>
+        <div class="input-group"><input type="text" class="input-field" placeholder="Nombre completo" id="nombreCompleto" /></div>
+        <div class="input-group"><input type="email" class="input-field" placeholder="Email" id="email" /></div>
+        <div class="input-group"><input type="tel" class="input-field" placeholder="Teléfono" id="telefono" /></div>
+        <div class="input-group"><input type="text" class="input-field" placeholder="Dirección (opcional)" id="direccion" /></div>
+        <div class="row">
+          <button class="btn-primary" id="btnCrearUsuario">Crear Usuario</button>
+          <button class="btn-secondary" id="btnCancelar">Cancelar</button>
         </div>
-
-        <!-- Modal Nueva Solicitud -->
-        <div id="newRequestModal" class="modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Nueva Solicitud de Recolección</h3>
-                    <button class="close-btn" onclick="closeModal('newRequestModal')">✕</button>
-                </div>
-
-                <div class="input-group">
-                    <label>Materiales a reciclar</label>
-                    <div class="materials-grid">
-                        <div class="material-option">
-                            <input type="checkbox" id="carton" value="Cartón">
-                            <label for="carton">Cartón</label>
-                        </div>
-                        <div class="material-option">
-                            <input type="checkbox" id="plastico" value="Plástico">
-                            <label for="plastico">Plástico</label>
-                        </div>
-                        <div class="material-option">
-                            <input type="checkbox" id="metal" value="Metal">
-                            <label for="metal">Metal</label>
-                        </div>
-                        <div class="material-option">
-                            <input type="checkbox" id="papel" value="Papel">
-                            <label for="papel">Papel</label>
-                        </div>
-                        <div class="material-option">
-                            <input type="checkbox" id="aluminio" value="Aluminio">
-                            <label for="aluminio">Aluminio</label>
-                        </div>
-                        <div class="material-option">
-                            <input type="checkbox" id="pet" value="Pet">
-                            <label for="pet">Pet</label>
-                        </div>
-                        <div class="material-option">
-                            <input type="checkbox" id="pasta" value="Pasta">
-                            <label for="pasta">Pasta</label>
-                        </div>
-                        <div class="material-option">
-                            <input type="checkbox" id="plegadiza" value="Plegadiza">
-                            <label for="plegadiza">Plegadiza</label>
-                        </div>
-                        <div class="material-option">
-                            <input type="checkbox" id="otros" value="Otros">
-                            <label for="otros">Otros</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="input-group quantity-selector">
-                    <label>Cantidad estimada</label>
-                    <select class="select-field">
-                        <option>Pequeña</option>
-                        <option selected>Mediana</option>
-                        <option>Grande</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" class="input-field" placeholder="Dirección de recolección *" required>
-                </div>
-
-                <div class="input-group">
-                    <input type="time" class="input-field" placeholder="Hora preferida (opcional)">
-                </div>
-
-                <div class="input-group">
-                    <textarea class="input-field" rows="3" placeholder="Descripción adicional (opcional)"></textarea>
-                </div>
-
-                <button class="btn-primary" onclick="crearSolicitud()">Crear Solicitud</button>
-            </div>
-        </div>
-
-        <!-- Panel de Notificaciones -->
-        <div id="notificationPanel" class="notification-panel">
-            <h3 style="margin-bottom: 20px;">Notificaciones</h3>
-            
-            <div class="notification-item">
-                <div class="notification-title">Reciclador asignado</div>
-                <div class="notification-message">Tu solicitud ha sido aceptada por un reciclador</div>
-                <div class="notification-time">Hace 5 minutos</div>
-            </div>
-            
-            <div class="notification-item">
-                <div class="notification-title">En camino</div>
-                <div class="notification-message">El reciclador está en camino a tu ubicación</div>
-                <div class="notification-time">Hace 2 minutos</div>
-            </div>
-            
-            <div class="notification-item">
-                <div class="notification-title">Recolección completada</div>
-                <div class="notification-message">Tu solicitud anterior fue completada exitosamente</div>
-                <div class="notification-time">Ayer</div>
-            </div>
-        </div>
+        <div class="tiny" style="margin-top:8px">Se crea una cuenta rápida con ingreso anónimo protegido por Firebase.</div>
+      </div>
     </div>
 
-    <script>
-        // Variables globales
-        let currentRole = 'usuario';
-        let currentUser = null;
-        let trackingInterval = null;
-        let notifications = [];
+    <!-- APP -->
+    <div id="mainPanel" class="hidden">
+      <div class="header">
+        <div class="logo"><div class="recycle-icon">♻</div> ReciclaBC</div>
+        <div class="user-info">
+          <button class="notification-btn" id="btnToggleNotifications" title="Notificaciones">🔔</button>
+          <button class="profile-btn" id="btnLogout" title="Cerrar sesión">🚪</button>
+          <span id="userName">—</span>
+        </div>
+      </div>
 
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            // Simular notificaciones en tiempo real
-            setInterval(checkForNotifications, 30000); // Cada 30 segundos
+      <!-- PANEL USUARIO -->
+      <div id="userPanel" class="main-content">
+        <h1 class="page-title">Panel de Usuario</h1>
+        <p class="page-subtitle">Gestiona tus solicitudes de recolección de reciclaje</p>
+        <div class="tabs">
+          <button class="tab active" data-tab="misSolicitudes">Mis Solicitudes</button>
+          <button class="tab" data-tab="historial">Historial</button>
+        </div>
+        <div class="live-tracking hidden" id="liveTracking">
+          <div class="tracking-status" id="trkStatus">Esperando asignación…</div>
+          <div class="eta" id="trkEta">—</div>
+          <div id="trkDistance" style="margin-top:6px">📍 —</div>
+        </div>
+        <div id="solicitudesActivas">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h2>Solicitudes Activas</h2>
+            <button class="new-request-btn" id="btnNuevaSolicitud"><span>⭐</span> Nueva Solicitud</button>
+          </div>
+          <div id="listaSolicitudes"></div>
+          <div class="row">
+            <button class="btn-secondary" id="btnGuardarUbicacion">📍 Usar mi ubicación</button>
+            <button class="btn-secondary" id="btnExportarCSV">⬇️ Descargar CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL RECICLADOR -->
+      <div id="recyclerPanel" class="main-content hidden">
+        <h1 class="page-title">Panel de Reciclador</h1>
+        <p class="page-subtitle">Puntos de recolección disponibles</p>
+        <div class="map-container" id="miniMap">
+          <div style="text-align:center;color:#6b7280">🗺️<br/>Mapa de Barrancabermeja<br/><small>Mostrando puntos de recolección</small></div>
+        </div>
+        <div class="row" style="margin-bottom:10px">
+          <button class="btn-primary" id="btnIniciarRuta">▶️ Iniciar ruta</button>
+          <button class="btn-secondary" id="btnDetenerRuta">⏹️ Detener ruta</button>
+        </div>
+        <div class="pickup-points" id="pickupList"></div>
+      </div>
+    </div>
+
+    <!-- MODAL NUEVA SOLICITUD -->
+    <div id="newRequestModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Nueva Solicitud de Recolección</h3>
+          <button class="close-btn" data-close-modal>✕</button>
+        </div>
+        <div class="input-group">
+          <label>Materiales a reciclar</label>
+          <div class="materials-grid">
+            <label class="material-option"><input type="checkbox" value="Cartón"/> Cartón</label>
+            <label class="material-option"><input type="checkbox" value="Plástico"/> Plástico</label>
+            <label class="material-option"><input type="checkbox" value="Metal"/> Metal</label>
+            <label class="material-option"><input type="checkbox" value="Papel"/> Papel</label>
+            <label class="material-option"><input type="checkbox" value="Aluminio"/> Aluminio</label>
+            <label class="material-option"><input type="checkbox" value="PET"/> PET</label>
+            <label class="material-option"><input type="checkbox" value="Pasta"/> Pasta</label>
+            <label class="material-option"><input type="checkbox" value="Plegadiza"/> Plegadiza</label>
+            <label class="material-option"><input type="checkbox" value="Otros"/> Otros</label>
+          </div>
+        </div>
+        <div class="input-group quantity-selector">
+          <label for="selCantidad">Cantidad estimada</label>
+          <select id="selCantidad" class="select-field">
+            <option>Pequeña</option>
+            <option selected>Mediana</option>
+            <option>Grande</option>
+          </select>
+        </div>
+        <div class="input-group"><input id="dirRecoleccion" type="text" class="input-field" placeholder="Dirección de recolección *" required /></div>
+        <div class="input-group"><input id="horaPref" type="time" class="input-field" placeholder="Hora preferida (opcional)" /></div>
+        <div class="input-group"><textarea id="descAdic" class="input-field" rows="3" placeholder="Descripción adicional (opcional)"></textarea></div>
+        <div class="row"><button class="btn-primary" id="btnCrearSolicitud">Crear Solicitud</button></div>
+      </div>
+    </div>
+
+    <!-- PANEL DE NOTIFICACIONES -->
+    <div id="notificationPanel" class="notification-panel">
+      <h3 style="margin-bottom:12px">Notificaciones</h3>
+      <div id="notificationItems"></div>
+    </div>
+  </div>
+
+  <!-- Firebase (v9 modular, CDN) -->
+  <script type="module">
+    /* ==========================
+       🔧 Firebase Configuración
+       Proyecto provisto por el usuario
+       ========================== */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, addDoc, updateDoc, collection, serverTimestamp, onSnapshot, query, where, orderBy, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIra7bW5kBj3ynwsAf-H-c97vWgptfnaE",
+      authDomain: "appreciclaje-b7b2a.firebaseapp.com",
+      projectId: "appreciclaje-b7b2a",
+      storageBucket: "appreciclaje-b7b2a.firebasestorage.app",
+      appId: "1:675875410563:web:33fdc6cd93cbd6950381b6",
+      measurementId: "G-VSR34TZDW1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    enableIndexedDbPersistence(db).catch(()=>{});
+
+    /* ==========================
+       🧠 Estado / helpers
+       ========================== */
+    let currentRole = 'usuario';
+    let currentUser = null; // { uid, nombre, email, telefono, direccion, role }
+    let trackingWatchId = null;
+    let activeTrackRequestId = null;
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => [...document.querySelectorAll(sel)];
+
+    const toast = (title, message) => {
+      const n = document.createElement('div');
+      n.style.cssText = `position:fixed;top:20px;right:20px;background:#fff;border:2px solid #10b981;border-radius:12px;padding:12px;box-shadow:0 10px 25px rgba(0,0,0,.1);z-index:2000;max-width:300px;animation:slideInRight .3s ease-out`;
+      n.innerHTML = `<div style="font-weight:700;color:#1f2937;margin-bottom:4px">${title}</div><div style="color:#6b7280;font-size:13px">${message}</div>`;
+      document.body.appendChild(n); setTimeout(()=>{ n.style.animation = 'slideOutRight .3s ease-in'; setTimeout(()=>n.remove(),300) }, 3500);
+    };
+
+    const timeAgo = (d)=>{
+      const now = new Date(); const diff = Math.floor((now - d)/60000);
+      if(diff<1) return 'Ahora'; if(diff<60) return `Hace ${diff} min`; if(diff<1440) return `Hace ${Math.floor(diff/60)} h`; return `Hace ${Math.floor(diff/1440)} d`;
+    };
+
+    const setVisible = (el, show) => el.classList[show?'remove':'add']('hidden');
+
+    /* ==========================
+       🚪 Registro/Login anónimo + perfil
+       ========================== */
+    function bindAuthUI(){
+      // Roles
+      $$('.role-card').forEach(card=>{
+        card.addEventListener('click', ()=>{
+          $$('.role-card').forEach(c=>c.classList.remove('active'));
+          card.classList.add('active');
+          currentRole = card.dataset.role;
         });
+      });
 
-        // Gestión de roles
-        document.querySelectorAll('.role-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                currentRole = this.dataset.role;
-            });
+      $('#btnCancelar').addEventListener('click', ()=>{
+        $$('.input-field').forEach(i=> i.value='');
+      });
+
+      $('#btnCrearUsuario').addEventListener('click', async ()=>{
+        const nombre = $('#nombreCompleto').value.trim();
+        const email = $('#email').value.trim();
+        const telefono = $('#telefono').value.trim();
+        const direccion = $('#direccion').value.trim();
+        if(!nombre || !email || !telefono){ alert('Por favor completa nombre, email y teléfono'); return; }
+
+        try{
+          const cred = await signInAnonymously(auth);
+          const uid = cred.user.uid;
+          const perfil = { uid, nombre, email, telefono, direccion, role: currentRole, createdAt: serverTimestamp() };
+          await setDoc(doc(db, 'users', uid), perfil, { merge:true });
+          localStorage.setItem('reciclabc_role', currentRole);
+          toast('¡Bienvenido!', `Tu cuenta como ${currentRole} ha sido creada.`);
+        }catch(e){ console.error(e); alert('No se pudo crear la cuenta. Reintenta.'); }
+      });
+
+      $('#btnLogout').addEventListener('click', async ()=>{
+        try{ await signOut(auth); location.reload(); }catch(e){ console.error(e); }
+      });
+    }
+
+    onAuthStateChanged(auth, async (user)=>{
+      if(user){
+        const snap = await getDoc(doc(db,'users', user.uid));
+        const savedRole = localStorage.getItem('reciclabc_role');
+        currentRole = savedRole || (snap.exists()? snap.data().role : 'usuario');
+        currentUser = { uid:user.uid, ...(snap.exists()? snap.data(): {}) };
+        $('#userName').textContent = (currentUser.nombre||'Usuario').split(' ')[0];
+        setVisible($('#loginScreen'), false); setVisible($('#mainPanel'), true);
+        if(currentRole==='reciclador'){ setVisible($('#userPanel'), false); setVisible($('#recyclerPanel'), true); subscribePickupPoints(); }
+        else{ setVisible($('#userPanel'), true); setVisible($('#recyclerPanel'), false); subscribeMyRequests(); }
+        toast('Sesión iniciada','Listo para usar ReciclaBC');
+      }else{
+        setVisible($('#loginScreen'), true); setVisible($('#mainPanel'), false);
+      }
+    });
+
+    bindAuthUI();
+
+    /* ==========================
+       🔔 Notificaciones (en pantalla)
+       ========================== */
+    const notifications = [];
+    const pushNotification = (title, message)=>{
+      notifications.unshift({id:Date.now(), title, message, time:new Date()});
+      renderNotifications(); toast(title, message);
+    };
+    const renderNotifications = ()=>{
+      const cont = $('#notificationItems'); cont.innerHTML = '';
+      notifications.slice(0,20).forEach(n=>{
+        const el = document.createElement('div'); el.className='notification-item';
+        el.innerHTML = `<div class="notification-title">${n.title}</div><div class="notification-message">${n.message}</div><div class="notification-time">${timeAgo(n.time)}</div>`;
+        cont.appendChild(el);
+      });
+    };
+    $('#btnToggleNotifications').addEventListener('click', ()=> $('#notificationPanel').classList.toggle('active'));
+    document.addEventListener('click', (e)=>{ const panel=$('#notificationPanel'); const btn=$('#btnToggleNotifications'); if(!panel.contains(e.target) && !btn.contains(e.target)){ panel.classList.remove('active'); }});
+
+    /* ==========================
+       🧾 Nueva solicitud (Usuario)
+       ========================== */
+    const openModal = id => $(id).classList.add('active');
+    const closeModal = id => $(id).classList.remove('active');
+    $('#btnNuevaSolicitud').addEventListener('click', ()=> openModal('#newRequestModal'));
+    $$('[data-close-modal]').forEach(b=> b.addEventListener('click', ()=> closeModal('#newRequestModal')));
+
+    $('#btnCrearSolicitud').addEventListener('click', async ()=>{
+      const materiales=[...$('#newRequestModal').querySelectorAll('input[type="checkbox"]:checked')].map(c=>c.value);
+      if(materiales.length===0){ alert('Selecciona al menos un material'); return; }
+      const direccion = $('#dirRecoleccion').value.trim(); if(!direccion){ alert('Ingresa la dirección de recolección'); return; }
+      const cantidad = $('#selCantidad').value; const hora = $('#horaPref').value || 'No especificada'; const descripcion = $('#descAdic').value || 'Sin descripción';
+      try{
+        const docRef = await addDoc(collection(db,'requests'),{
+          userId: currentUser.uid,
+          materiales, direccion, cantidad, hora, descripcion,
+          estado:'Pendiente', createdAt: serverTimestamp(), assignedTo: null, userLocation: null, recyclerLocation: null
         });
+        closeModal('#newRequestModal');
+        $('#newRequestModal').querySelectorAll('input, textarea').forEach(i=>{ if(i.type==='checkbox') i.checked=false; else i.value=''; });
+        pushNotification('Solicitud creada','Tu solicitud fue enviada');
+      }catch(e){ console.error(e); alert('No se pudo crear la solicitud'); }
+    });
 
-        // Funciones de autenticación
-        function crearUsuario() {
-            const nombre = document.getElementById('nombreCompleto').value;
-            const email = document.getElementById('email').value;
-            const telefono = document.getElementById('telefono').value;
-            const direccion = document.getElementById('direccion').value;
-
-            if (!nombre || !email || !telefono) {
-                alert('Por favor completa todos los campos obligatorios');
-                return;
-            }
-
-            currentUser = {
-                nombre: nombre,
-                email: email,
-                telefono: telefono,
-                direccion: direccion,
-                role: currentRole
-            };
-
-            document.getElementById('userName').textContent = nombre.split(' ')[0];
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('mainPanel').classList.remove('hidden');
-
-            if (currentRole === 'reciclador') {
-                document.getElementById('userPanel').classList.add('hidden');
-                document.getElementById('recyclerPanel').classList.remove('hidden');
-            }
-
-            // Mostrar notificación de bienvenida
-            showNotification('¡Bienvenido!', `Tu cuenta como ${currentRole} ha sido creada exitosamente`);
-        }
-
-        function cancelar() {
-            // Limpiar formulario
-            document.querySelectorAll('.input-field').forEach(input => input.value = '');
-        }
-
-        // Gestión de pestañas
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            event.target.classList.add('active');
-
-            // Aquí podrías cambiar el contenido según la pestaña
-            if (tabName === 'historial') {
-                // Mostrar historial
-                console.log('Mostrando historial');
-            }
-        }
-
-        // Gestión de modales
-        function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        // Crear nueva solicitud
-        function crearSolicitud() {
-            const materiales = [];
-            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                materiales.push(checkbox.value);
-            });
-
-            if (materiales.length === 0) {
-                alert('Por favor selecciona al menos un material');
-                return;
-            }
-
-            const direccion = document.querySelector('#newRequestModal input[placeholder*="Dirección"]').value;
-            if (!direccion) {
-                alert('Por favor ingresa la dirección de recolección');
-                return;
-            }
-
-            // Crear nueva solicitud
-            const nuevaSolicitud = {
-                id: Date.now(),
-                materiales: materiales.join(', '),
-                direccion: direccion,
-                cantidad: document.querySelector('#newRequestModal select').value,
-                hora: document.querySelector('#newRequestModal input[type="time"]').value || 'No especificada',
-                descripcion: document.querySelector('#newRequestModal textarea').value || 'Sin descripción',
-                estado: 'Pendiente',
-                fecha: new Date().toLocaleDateString('es-CO')
-            };
-
-            // Agregar la solicitud al panel
-            agregarSolicitudAlPanel(nuevaSolicitud);
-
-            // Cerrar modal
-            closeModal('newRequestModal');
-
-            // Limpiar formulario
-            document.querySelectorAll('#newRequestModal input[type="checkbox"]').forEach(cb => cb.checked = false);
-            document.querySelectorAll('#newRequestModal input, #newRequestModal textarea').forEach(input => input.value = '');
-
-            // Mostrar notificación
-            showNotification('Solicitud creada', 'Tu solicitud de recolección ha sido enviada exitosamente');
-
-            // Simular que un reciclador acepta la solicitud después de unos segundos
-            setTimeout(() => {
-                showNotification('Solicitud aceptada', 'Un reciclador ha aceptado tu solicitud');
-                setTimeout(() => {
-                    showNotification('En camino', 'El reciclador está en camino a tu ubicación');
-                    document.getElementById('liveTracking').style.display = 'block';
-                }, 5000);
-            }, 10000);
-        }
-
-        // Agregar solicitud al panel
-        function agregarSolicitudAlPanel(solicitud) {
-            const solicitudesContainer = document.getElementById('solicitudesActivas');
-            const nuevaCard = document.createElement('div');
-            nuevaCard.className = 'request-card';
-            nuevaCard.innerHTML = `
-                <div class="request-header">
-                    <div>
-                        <div class="materials">${solicitud.materiales}</div>
-                        <div class="status-badge">${solicitud.estado}</div>
-                    </div>
-                </div>
-                <div class="request-info">
-                    <div class="info-item">📍 ${solicitud.direccion}</div>
-                    <div class="info-item">📅 ${solicitud.fecha}</div>
-                    <div class="info-item">📦 Cantidad: ${solicitud.cantidad}</div>
-                    <div class="info-item">🕕 Hora preferida: ${solicitud.hora}</div>
-                    <div class="info-item">📝 ${solicitud.descripcion}</div>
-                </div>
-                <button class="btn-primary" style="margin-top: 15px; padding: 10px;" onclick="startTracking()">
-                    Ver en tiempo real
-                </button>
-            `;
-            
-            // Insertar después del botón "Nueva Solicitud"
-            const headerDiv = solicitudesContainer.querySelector('div');
-            solicitudesContainer.insertBefore(nuevaCard, headerDiv.nextSibling);
-        }
-
-        // Seguimiento en tiempo real
-        function startTracking() {
-            document.getElementById('liveTracking').style.display = 'block';
-            
-            let timeRemaining = 15;
-            let distance = 2.5;
-            
-            if (trackingInterval) {
-                clearInterval(trackingInterval);
-            }
-            
-            trackingInterval = setInterval(() => {
-                timeRemaining -= 1;
-                distance -= 0.2;
-                
-                if (timeRemaining <= 0 || distance <= 0) {
-                    document.querySelector('.tracking-status').textContent = 'Reciclador ha llegado';
-                    document.querySelector('.eta').textContent = 'Recolección en progreso';
-                    document.querySelector('#liveTracking div:last-child').textContent = '📍 En tu ubicación';
-                    
-                    showNotification('Llegada', 'El reciclador ha llegado a tu ubicación');
-                    
-                    setTimeout(() => {
-                        document.querySelector('.tracking-status').textContent = 'Recolección completada';
-                        document.querySelector('.eta').textContent = 'Gracias por reciclar con nosotros';
-                        document.querySelector('#liveTracking div:last-child').textContent = '✅ Materiales recolectados';
-                        showNotification('Completado', 'Tu recolección ha sido completada exitosamente');
-                        
-                        // Actualizar estado de la solicitud
-                        setTimeout(() => {
-                            document.getElementById('liveTracking').style.display = 'none';
-                        }, 5000);
-                    }, 8000);
-                    
-                    clearInterval(trackingInterval);
-                } else {
-                    document.querySelector('.eta').textContent = `Tiempo estimado: ${timeRemaining} minutos`;
-                    document.querySelector('#liveTracking div:last-child').textContent = `📍 A ${distance.toFixed(1)} km de distancia`;
-                }
-            }, 1000);
-        }
-
-        // Gestión para recicladores
-        function acceptCollection(button) {
-            const pointCard = button.closest('.pickup-point');
-            pointCard.style.border = '2px solid #10b981';
-            pointCard.style.background = '#ecfdf5';
-            
-            button.textContent = 'Recolección Aceptada';
-            button.style.background = '#059669';
-            button.disabled = true;
-            
-            const materials = pointCard.querySelector('.point-materials').textContent;
-            const location = pointCard.querySelector('.point-info').textContent.replace('📍 ', '');
-            
-            showNotification('Recolección aceptada', `Has aceptado recoger ${materials} en ${location}`);
-            
-            // Simular navegación/ruta
-            setTimeout(() => {
-                showNotification('Ruta iniciada', 'Navegación activada hacia el punto de recolección');
-            }, 2000);
-            
-            // Simular llegada y completación
-            setTimeout(() => {
-                button.textContent = 'Completada ✓';
-                button.style.background = '#10b981';
-                showNotification('Recolección completada', 'Has completado la recolección exitosamente');
-                
-                // Remover el punto después de completar
-                setTimeout(() => {
-                    pointCard.style.opacity = '0.5';
-                    pointCard.style.transform = 'scale(0.95)';
-                }, 2000);
-            }, 15000);
-        }
-
-        // Sistema de notificaciones
-        function showNotification(title, message) {
-            const notification = {
-                id: Date.now(),
-                title: title,
-                message: message,
-                time: new Date(),
-                read: false
-            };
-            
-            notifications.unshift(notification);
-            updateNotificationPanel();
-            
-            // Animación del botón de notificación
-            const notificationBtn = document.querySelector('.notification-btn');
-            notificationBtn.style.animation = 'pulse 0.5s ease-in-out';
-            setTimeout(() => {
-                notificationBtn.style.animation = '';
-            }, 500);
-            
-            // Mostrar notificación temporal
-            showTempNotification(title, message);
-        }
-
-        function showTempNotification(title, message) {
-            const tempNotification = document.createElement('div');
-            tempNotification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: white;
-                border: 2px solid #10b981;
-                border-radius: 12px;
-                padding: 15px;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-                z-index: 2000;
-                max-width: 300px;
-                animation: slideInRight 0.3s ease-out;
-            `;
-            
-            tempNotification.innerHTML = `
-                <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;">${title}</div>
-                <div style="color: #6b7280; font-size: 14px;">${message}</div>
-            `;
-            
-            document.body.appendChild(tempNotification);
-            
-            setTimeout(() => {
-                tempNotification.style.animation = 'slideOutRight 0.3s ease-in';
-                setTimeout(() => {
-                    document.body.removeChild(tempNotification);
-                }, 300);
-            }, 4000);
-        }
-
-        function updateNotificationPanel() {
-            const panel = document.getElementById('notificationPanel');
-            const container = panel.querySelector('div:not(:first-child)')?.parentElement || panel;
-            
-            // Limpiar notificaciones existentes (excepto el título)
-            const existingNotifications = panel.querySelectorAll('.notification-item');
-            existingNotifications.forEach(item => item.remove());
-            
-            // Agregar nuevas notificaciones
-            notifications.slice(0, 10).forEach(notification => {
-                const notificationElement = document.createElement('div');
-                notificationElement.className = 'notification-item';
-                
-                const timeAgo = getTimeAgo(notification.time);
-                
-                notificationElement.innerHTML = `
-                    <div class="notification-title">${notification.title}</div>
-                    <div class="notification-message">${notification.message}</div>
-                    <div class="notification-time">${timeAgo}</div>
-                `;
-                
-                panel.appendChild(notificationElement);
-            });
-        }
-
-        function getTimeAgo(date) {
-            const now = new Date();
-            const diffInMinutes = Math.floor((now - date) / (1000 * 60));
-            
-            if (diffInMinutes < 1) return 'Ahora';
-            if (diffInMinutes < 60) return `Hace ${diffInMinutes} minutos`;
-            if (diffInMinutes < 1440) return `Hace ${Math.floor(diffInMinutes / 60)} horas`;
-            return `Hace ${Math.floor(diffInMinutes / 1440)} días`;
-        }
-
-        function toggleNotifications() {
-            const panel = document.getElementById('notificationPanel');
-            panel.classList.toggle('active');
-        }
-
-        // Función para simular llegada de nuevas solicitudes (para recicladores)
-        function checkForNotifications() {
-            if (currentRole === 'reciclador') {
-                // Simular nuevas solicitudes ocasionalmente
-                if (Math.random() > 0.7) {
-                    const locations = ['Barrio Nueva Colombia', 'Centro Histórico', 'La Libertad', 'El Recreo'];
-                    const materials = ['Cartón, Papel', 'Plástico, Pet', 'Metal, Aluminio', 'Pasta, Plegadiza'];
-                    
-                    const randomLocation = locations[Math.floor(Math.random() * locations.length)];
-                    const randomMaterials = materials[Math.floor(Math.random() * materials.length)];
-                    
-                    showNotification('Nueva solicitud', `${randomMaterials} disponible en ${randomLocation}`);
-                }
-            } else {
-                // Notificaciones para usuarios ocasionalmente
-                if (Math.random() > 0.8) {
-                    const updates = [
-                        'Tu solicitud está siendo revisada',
-                        'Nuevos recicladores disponibles en tu zona',
-                        'Recordatorio: tienes una recolección pendiente'
-                    ];
-                    const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
-                    showNotification('Actualización', randomUpdate);
-                }
-            }
-        }
-
-        // Cerrar panel de notificaciones al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            const panel = document.getElementById('notificationPanel');
-            const notificationBtn = document.querySelector('.notification-btn');
-            
-            if (!panel.contains(e.target) && !notificationBtn.contains(e.target)) {
-                panel.classList.remove('active');
-            }
+    // Exportar CSV
+    $('#btnExportarCSV').addEventListener('click', async ()=>{
+      const q = query(collection(db,'requests'), where('userId','==', currentUser.uid), orderBy('createdAt','desc'));
+      const rows = [];
+      onSnapshot(q, (snap)=>{
+        rows.length=0;
+        snap.forEach(d=>{
+          const r=d.data(); rows.push({Fecha: r.createdAt?.toDate?.().toLocaleString()||'', Materiales: r.materiales.join(', '), Direccion: r.direccion, Cantidad: r.cantidad, Hora: r.hora, Estado: r.estado});
         });
+        const csv = 'data:text/csv;charset=utf-8,' + ['Fecha,Materiales,Dirección,Cantidad,Hora,Estado', ...rows.map(o=>`${o.Fecha},${o.Materiales},${o.Direccion},${o.Cantidad},${o.Hora},${o.Estado}`)].join('\n');
+        const a=document.createElement('a'); a.href=encodeURI(csv); a.download='mis_solicitudes_reciclabc.csv'; a.click();
+      });
+    });
 
-        // Cerrar modales al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
+    // Guardar ubicación del usuario (para ETA)
+    $('#btnGuardarUbicacion').addEventListener('click', ()=>{
+      if(!navigator.geolocation){ alert('Tu navegador no soporta geolocalización'); return; }
+      navigator.geolocation.getCurrentPosition(async (pos)=>{
+        const {latitude, longitude} = pos.coords;
+        // Guardar en todas las solicitudes pendientes del usuario
+        const q = query(collection(db,'requests'), where('userId','==', currentUser.uid), where('estado','!=','Completada'));
+        onSnapshot(q, async (snap)=>{
+          for(const d of snap.docs){ await updateDoc(doc(db,'requests', d.id), { userLocation: {lat:latitude, lng:longitude} }); }
         });
+        toast('Ubicación guardada','Tus solicitudes mostrarán ETA real');
+      }, ()=> alert('No se pudo obtener la ubicación'));
+    });
 
-        // Animaciones CSS adicionales
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes pulse {
-                0% { transform: scale(1); }
-                50% { transform: scale(1.1); background: rgba(255,255,255,0.4); }
-                100% { transform: scale(1); }
-            }
+    // Listas de solicitudes del usuario + tracking
+    let unsubMyRequests = null; let unsubTrack = null;
+    function subscribeMyRequests(){
+      if(unsubMyRequests) unsubMyRequests();
+      const q = query(collection(db,'requests'), where('userId','==', currentUser.uid), orderBy('createdAt','desc'));
+      unsubMyRequests = onSnapshot(q, (snap)=>{
+        const cont = $('#listaSolicitudes'); cont.innerHTML='';
+        let firstActiveId = null;
+        snap.forEach(d=>{
+          const r=d.data(); const card=document.createElement('div'); card.className='request-card';
+          const estadoClass = r.estado==='Completada'?'completed': (r.estado==='En camino'?'in-progress':'');
+          card.innerHTML = `
+            <div class="request-header">
+              <div><div class="materials">${r.materiales.join(', ')}</div><div class="status-badge ${estadoClass}">${r.estado}</div></div>
+            </div>
+            <div class="request-info">
+              <div class="info-item">📍 ${r.direccion}</div>
+              <div class="info-item">📅 ${r.createdAt?.toDate?.().toLocaleDateString('es-CO')||''}</div>
+              <div class="info-item">📦 Cantidad: ${r.cantidad}</div>
+              <div class="info-item">🕕 Hora preferida: ${r.hora}</div>
+              <div class="info-item">📝 ${r.descripcion}</div>
+            </div>
+            <button class="btn-primary" style="margin-top:10px;padding:10px" data-ver="${d.id}">Ver en tiempo real</button>`;
+          cont.appendChild(card);
+          if(r.estado!=='Completada' && !firstActiveId) firstActiveId = d.id;
+        });
+        // auto activar tracking del primero activo
+        if(firstActiveId){ startUserTracking(firstActiveId); }
+        $$('#listaSolicitudes [data-ver]').forEach(b=> b.addEventListener('click', ()=> startUserTracking(b.dataset.ver)) );
+      });
+    }
 
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
+    function startUserTracking(requestId){
+      activeTrackRequestId = requestId; setVisible($('#liveTracking'), true);
+      if(unsubTrack) unsubTrack();
+      unsubTrack = onSnapshot(doc(db,'requests', requestId), (d)=>{
+        const r=d.data(); if(!r) return;
+        const status = r.estado;
+        $('#trkStatus').textContent = status==='Completada' ? 'Recolección completada' : (status==='En camino' ? 'Reciclador en camino' : 'Pendiente');
+        // ETA y distancia si hay ubicaciones
+        if(r.userLocation && r.recyclerLocation){
+          const distKm = haversineKm(r.userLocation.lat, r.userLocation.lng, r.recyclerLocation.lat, r.recyclerLocation.lng);
+          $('#trkDistance').textContent = `📍 A ${distKm.toFixed(2)} km`;
+          const minutes = Math.max(1, Math.round((distKm/25)*60)); // 25km/h estimado
+          $('#trkEta').textContent = `Tiempo estimado: ${minutes} min`;
+        }else{ $('#trkDistance').textContent='📍 —'; $('#trkEta').textContent='—'; }
+      });
+    }
 
-            @keyframes slideOutRight {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
+    function haversineKm(lat1, lon1, lat2, lon2){
+      const R=6371; const toRad = v=> v*Math.PI/180; const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1);
+      const a=Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2; return 2*R*Math.asin(Math.sqrt(a));
+    }
 
-            .request-card:hover .btn-primary {
-                background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            }
+    /* ==========================
+       🚛 Reciclador: ver/aceptar y enviar ubicación en vivo
+       ========================== */
+    let unsubPickup = null;
+    function subscribePickupPoints(){
+      if(unsubPickup) unsubPickup();
+      const q = query(collection(db,'requests'), where('estado','in',['Pendiente','En camino']), orderBy('createdAt','desc'));
+      unsubPickup = onSnapshot(q, (snap)=>{
+        const list = $('#pickupList'); list.innerHTML='';
+        snap.forEach(d=>{
+          const r=d.data(); const card=document.createElement('div'); card.className = 'pickup-point' + (r.estado==='Pendiente'?' available':'');
+          const nombreUsuario = r.userName || 'Usuario';
+          const distTxt = r.userLocation && currentUser?.lastLoc ? `${haversineKm(r.userLocation.lat,r.userLocation.lng,currentUser.lastLoc.lat,currentUser.lastLoc.lng).toFixed(1)} km` : (r.userLocation ? '—' : '—');
+          card.innerHTML = `
+            <div class="point-header">
+              <div class="point-materials">${r.materiales.join(', ')}</div>
+              <div class="distance">${distTxt}</div>
+            </div>
+            <div class="point-info">📍 ${r.direccion}</div>
+            <div class="point-info">📦 Cantidad: ${r.cantidad}</div>
+            <div class="point-info">🕘 Preferida: ${r.hora}</div>
+            <div class="point-info">👤 ${nombreUsuario}</div>
+            <div class="row" style="margin-top:8px">
+              <button class="collect-btn" data-aceptar="${d.id}">Aceptar</button>
+              <button class="btn-secondary" data-completar="${d.id}">Marcar completada</button>
+            </div>`;
+          list.appendChild(card);
+        });
+        $$('[data-aceptar]').forEach(b=> b.addEventListener('click', ()=> aceptarRecoleccion(b.dataset.aceptar)) );
+        $$('[data-completar]').forEach(b=> b.addEventListener('click', ()=> completarRecoleccion(b.dataset.completar)) );
+      });
+    }
 
-            .pickup-point.completed {
-                opacity: 0.6;
-                pointer-events: none;
-            }
+    async function aceptarRecoleccion(id){
+      await updateDoc(doc(db,'requests', id), { assignedTo: currentUser.uid, estado:'En camino' });
+      pushNotification('Recolección aceptada','Has aceptado la solicitud');
+    }
+    async function completarRecoleccion(id){
+      await updateDoc(doc(db,'requests', id), { estado:'Completada' });
+      pushNotification('Recolección completada','¡Buen trabajo!');
+    }
 
-            .notification-btn {
-                position: relative;
-            }
+    // Enviar geolocalización en vivo del reciclador
+    $('#btnIniciarRuta').addEventListener('click', ()=>{
+      if(!navigator.geolocation){ alert('Tu navegador no soporta geolocalización'); return; }
+      if(trackingWatchId) return;
+      trackingWatchId = navigator.geolocation.watchPosition(async (pos)=>{
+        const {latitude, longitude} = pos.coords; currentUser.lastLoc = {lat:latitude, lng:longitude};
+        // Actualiza todas las solicitudes asignadas a mí en curso
+        const q = query(collection(db,'requests'), where('assignedTo','==', currentUser.uid), where('estado','==','En camino'));
+        onSnapshot(q, async (snap)=>{
+          for(const d of snap.docs){ await updateDoc(doc(db,'requests', d.id), { recyclerLocation: {lat:latitude, lng:longitude} }); }
+        });
+      }, (err)=> console.warn(err), { enableHighAccuracy:true, maximumAge:5000, timeout:20000 });
+      toast('Ruta iniciada','Compartiendo ubicación en tiempo real');
+    });
+    $('#btnDetenerRuta').addEventListener('click', ()=>{
+      if(trackingWatchId){ navigator.geolocation.clearWatch(trackingWatchId); trackingWatchId=null; toast('Ruta detenida','Ubicación detenida'); }
+    });
 
-            .notification-btn::after {
-                content: '';
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                width: 8px;
-                height: 8px;
-                background: #ef4444;
-                border-radius: 50%;
-                opacity: 0;
-                transition: opacity 0.3s;
-            }
+    /* ==========================
+       🧭 Navegación de pestañas
+       ========================== */
+    $$('.tab').forEach(tab=> tab.addEventListener('click', (e)=>{
+      $$('.tab').forEach(t=> t.classList.remove('active')); tab.classList.add('active');
+      // Aquí podrías alternar vistas secundarias si agregas más secciones
+    }));
 
-            .notification-btn.has-notifications::after {
-                opacity: 1;
-            }
-        `;
-        document.head.appendChild(style);
+    /* ==========================
+       ✨ Animaciones utilitarias
+       ========================== */
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideInRight{ from{ transform:translateX(100%); opacity:0 } to{ transform:translateX(0); opacity:1 } }
+      @keyframes slideOutRight{ from{ transform:translateX(0); opacity:1 } to{ transform:translateX(100%); opacity:0 } }
+      .request-card:hover .btn-primary{ background:linear-gradient(135deg,#059669 0%,#047857 100%) }
+      .notification-btn{ position:relative }
+      .notification-btn::after{ content:''; position:absolute; top:5px; right:5px; width:8px; height:8px; background:#ef4444; border-radius:50%; opacity:0; transition:opacity .3s }
+      .notification-btn.has-notifications::after{ opacity:1 }
+    `; document.head.appendChild(style);
 
-        // Inicializar notificaciones predeterminadas
-        setTimeout(() => {
-            if (currentRole === 'usuario') {
-                showNotification('Bienvenido', 'Puedes crear tu primera solicitud de recolección');
-            } else {
-                showNotification('Reciclador activo', 'Estás listo para recibir solicitudes de recolección');
-            }
-        }, 2000);
-    </script>
+    // Saludo inicial
+    setTimeout(()=> pushNotification('Bienvenido','Crea tu primera solicitud o acepta una disponible'), 1200);
+  </script>
 </body>
 </html>
