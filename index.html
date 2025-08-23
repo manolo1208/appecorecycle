@@ -1,202 +1,905 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <title>ReciclApp — Recolección Inteligente</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReciclaBC - Recolección de Reciclaje</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <!-- Tailwind (CDN quick dev) -->
-  <script src="https://cdn.tailwindcss.com"></script>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f9ff 100%);
+            min-height: 100vh;
+        }
 
-  <!-- Font Awesome -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"></script>
+        .container {
+            max-width: 414px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
 
-  <!-- Leaflet Routing Machine -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js" defer></script>
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-  <!-- App styles -->
-  <link rel="stylesheet" href="./styles.css" />
+        .recycle-icon {
+            width: 32px;
+            height: 32px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #10b981;
+            font-size: 18px;
+        }
 
-  <!-- App logic -->
-  <script type="module" src="./app.js" defer></script>
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .notification-btn, .profile-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .notification-btn:hover, .profile-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .login-screen {
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .login-form {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .form-title {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f9fafb;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #10b981;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #f9fafb;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .role-card {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: #f9fafb;
+        }
+
+        .role-card.active {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .main-content {
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f3f4f6;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #6b7280;
+        }
+
+        .tab.active {
+            background: white;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .new-request-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #1f2937;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .new-request-btn:hover {
+            background: #374151;
+            transform: translateY(-1px);
+        }
+
+        .request-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #f3f4f6;
+            transition: all 0.3s;
+        }
+
+        .request-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .materials {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .status-badge {
+            background: #fbbf24;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .status-badge.completed {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-badge.in-progress {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .request-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 90%;
+            width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .close-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .material-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .material-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #10b981;
+        }
+
+        .quantity-selector {
+            margin-bottom: 20px;
+        }
+
+        .map-container {
+            height: 300px;
+            background: #f3f4f6;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 2px dashed #d1d5db;
+        }
+
+        .pickup-points {
+            display: grid;
+            gap: 15px;
+        }
+
+        .pickup-point {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pickup-point.available {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .pickup-point:hover {
+            border-color: #10b981;
+            transform: translateY(-2px);
+        }
+
+        .point-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .point-materials {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .distance {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .point-info {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .collect-btn {
+            width: 100%;
+            padding: 10px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .notification-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .notification-panel.active {
+            right: 0;
+        }
+
+        .notification-item {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #10b981;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 5px;
+        }
+
+        .notification-message {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .notification-time {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .live-tracking {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tracking-status {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .eta {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body class="bg-emerald-50 text-slate-800 font-sans antialiased">
-
-  <!-- Loading -->
-  <div id="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-b from-emerald-600 to-green-500 text-white">
-    <div class="text-center">
-      <div class="mb-3 text-4xl"><i class="fa-solid fa-recycle fa-spin"></i></div>
-      <h1 class="text-2xl font-bold">ReciclApp</h1>
-      <p class="opacity-90 mt-2">Conectando recicladores y usuarios…</p>
-    </div>
-  </div>
-
-  <!-- AUTH SCREEN -->
-  <main id="auth-screen" class="min-h-screen flex items-center justify-center p-6">
-    <div class="w-full max-w-xl mx-auto">
-      <div class="bg-white rounded-2xl p-6 shadow-lg">
-        <div class="text-center mb-4">
-          <div class="mx-auto w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500 to-green-400 flex items-center justify-center text-white text-2xl">R</div>
-          <h2 class="mt-3 text-2xl font-bold">ReciclApp</h2>
-          <p class="text-sm text-slate-500 mt-1">Solicita recolección y sigue al reciclador en tiempo real</p>
-        </div>
-
-        <!-- LOGIN -->
-        <form id="login-form" class="space-y-3">
-          <input id="email-login" class="input" type="email" placeholder="Correo" required />
-          <input id="password-login" class="input" type="password" placeholder="Contraseña" required />
-          <div class="flex gap-3">
-            <button class="btn-primary flex-1" type="submit">Iniciar sesión</button>
-            <button id="btn-google" class="btn-google flex-1" type="button"><i class="fa-brands fa-google mr-2"></i>Google</button>
-          </div>
-          <div class="text-center text-sm text-slate-500">
-            ¿No tienes cuenta? <button id="show-signup" class="text-emerald-600 font-semibold">Regístrate</button>
-          </div>
-        </form>
-
-        <!-- SIGNUP -->
-        <form id="signup-form" class="space-y-3 hidden mt-4">
-          <input id="name-register" class="input" type="text" placeholder="Nombre completo" required />
-          <input id="email-register" class="input" type="email" placeholder="Correo" required />
-          <input id="password-register" class="input" type="password" placeholder="Contraseña" required />
-          <select id="role-register" class="input" required>
-            <option value="">Selecciona rol</option>
-            <option value="usuario">Usuario</option>
-            <option value="reciclador">Reciclador</option>
-          </select>
-          <div class="flex gap-3">
-            <button class="btn-primary flex-1" type="submit">Crear cuenta</button>
-            <button id="show-login" class="btn-ghost flex-1" type="button">Volver</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </main>
-
-  <!-- APP CONTAINER -->
-  <div id="app" class="hidden min-h-screen">
-    <!-- HEADER -->
-    <header class="bg-white shadow sticky top-0 z-40">
-      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-emerald-500 to-green-400 flex items-center justify-center text-white font-bold">R</div>
-          <div>
-            <h1 class="text-lg font-bold">ReciclApp</h1>
-            <p class="text-xs text-slate-500">Recolección gratuita · Seguimiento en vivo</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="text-sm text-slate-600" id="display-name">—</div>
-          <div id="role-badge" class="text-sm px-3 py-1 rounded-full bg-emerald-50 text-emerald-600">—</div>
-          <button id="logout" class="text-slate-600 hover:text-red-500" title="Cerrar sesión"><i class="fa-solid fa-right-from-bracket"></i></button>
-        </div>
-      </div>
-    </header>
-
-    <div class="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- SIDEBAR -->
-      <aside class="col-span-1 space-y-4">
-        <div class="bg-white rounded-2xl p-4 shadow">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="text-xs text-slate-400">Rol</div>
-              <div id="left-role" class="font-semibold text-emerald-600">—</div>
-            </div>
-            <div><button id="btn-new" class="btn-primary px-3 py-2">+ Solicitar</button></div>
-          </div>
-          <p class="text-sm text-slate-500 mt-2">Solicita la recolección de residuos aprovechables.</p>
-        </div>
-
-        <div id="panel-active" class="bg-white rounded-2xl p-4 shadow">
-          <h3 class="font-semibold">Solicitudes activas</h3>
-          <div id="list-active" class="space-y-2 mt-3"></div>
-        </div>
-
-        <div class="bg-white rounded-2xl p-4 shadow">
-          <h4 class="font-semibold">Historial</h4>
-          <div id="history" class="mt-3 space-y-2 text-sm text-slate-600"></div>
-        </div>
-      </aside>
-
-      <!-- MAP & FORM -->
-      <section class="col-span-2 space-y-4">
-        <div id="map" class="rounded-2xl border border-slate-200 h-[520px] bg-white"></div>
-
-        <!-- Modal New Request -->
-        <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4">
-          <div class="bg-white rounded-2xl w-full max-w-3xl p-6 shadow-lg overflow-auto max-h-[90vh]">
-            <div class="flex items-center justify-between mb-4">
-              <h3 class="text-xl font-semibold">Nueva Solicitud</h3>
-              <button id="close-modal" class="text-slate-500"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <form id="request-form" class="space-y-4">
-              <div>
-                <label class="text-sm font-medium">Tipo de residuo</label>
-                <select id="res-type" class="input" required>
-                  <option value="">-- Seleccionar --</option>
-                  <optgroup label="Aprovechables">
-                    <option>Cartón</option>
-                    <option>Plástico</option>
-                    <option>Papel</option>
-                    <option>Metales</option>
-                    <option>Vidrio</option>
-                  </optgroup>
-                  <optgroup label="Electrodomésticos">
-                    <option>Nevera</option>
-                    <option>Lavadora</option>
-                    <option>Aire acondicionado</option>
-                  </optgroup>
-                  <option>Otro</option>
-                </select>
-              </div>
-
-              <div class="grid grid-cols-2 gap-3">
-                <input id="weight" class="input" type="number" placeholder="Peso (kg)" min="0" />
-                <input id="bags" class="input" type="number" placeholder="Bolsas" min="0" />
-              </div>
-
-              <div>
-                <label class="text-sm font-medium">Foto (opcional)</label>
-                <input id="photo" type="file" accept="image/*" class="mt-2" />
-                <div id="photo-preview" class="mt-3 hidden"><img class="w-full max-h-48 object-cover rounded" alt="preview"/></div>
-              </div>
-
-              <div>
-                <label class="text-sm font-medium">Ubicación (toca en el mapa)</label>
-                <div id="mini-map" class="h-48 rounded border border-slate-200"></div>
-              </div>
-
-              <div>
-                <label class="text-sm font-medium">Tipo de recolección</label>
-                <div class="flex gap-4 mt-2">
-                  <label class="flex items-center gap-2"><input type="radio" name="collect" value="inmediata" checked/>Inmediata</label>
-                  <label class="flex items-center gap-2"><input type="radio" name="collect" value="programada"/>Programada</label>
+<body>
+    <div class="container">
+        <!-- Pantalla de Inicio de Sesión -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-form">
+                <h2 class="form-title">
+                    <div class="recycle-icon">♻</div>
+                    Crear Nuevo Usuario
+                </h2>
+                
+                <div class="role-selector">
+                    <div class="role-card active" data-role="usuario">
+                        <div style="font-size: 24px; margin-bottom: 10px;">👤</div>
+                        <div>Usuario</div>
+                        <small>Solicitar recolección</small>
+                    </div>
+                    <div class="role-card" data-role="reciclador">
+                        <div style="font-size: 24px; margin-bottom: 10px;">🚛</div>
+                        <div>Reciclador</div>
+                        <small>Recoger materiales</small>
+                    </div>
                 </div>
-                <div id="schedule-fields" class="hidden mt-2">
-                  <input id="date-s" type="date" class="input inline-block w-1/2 mr-2"/>
-                  <input id="time-s" type="time" class="input inline-block w-1/2"/>
-                </div>
-              </div>
 
-              <div class="flex gap-3">
-                <button class="btn-primary flex-1" type="submit">Enviar solicitud</button>
-                <button id="cancel-request" type="button" class="btn-ghost">Cancelar</button>
-              </div>
-            </form>
-          </div>
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="Nombre completo" id="nombreCompleto">
+                </div>
+                
+                <div class="input-group">
+                    <input type="email" class="input-field" placeholder="Email" id="email">
+                </div>
+                
+                <div class="input-group">
+                    <input type="tel" class="input-field" placeholder="Teléfono" id="telefono">
+                </div>
+                
+                <div class="input-group">
+                    <select class="select-field" id="usuario">
+                        <option>Usuario</option>
+                        <option>Reciclador</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="Dirección (opcional)" id="direccion">
+                </div>
+                
+                <button class="btn-primary" onclick="crearUsuario()">Crear Usuario</button>
+                <button class="btn-secondary" onclick="cancelar()">Cancelar</button>
+            </div>
         </div>
 
-      </section>
+        <!-- Panel Principal -->
+        <div id="mainPanel" class="hidden">
+            <div class="header">
+                <div class="logo">
+                    <div class="recycle-icon">♻</div>
+                    ReciclaBC
+                </div>
+                <div class="user-info">
+                    <button class="notification-btn" onclick="toggleNotifications()">🔔</button>
+                    <button class="profile-btn">👤</button>
+                    <span id="userName">jose</span>
+                </div>
+            </div>
+
+            <!-- Panel de Usuario -->
+            <div id="userPanel" class="main-content">
+                <h1 class="page-title">Panel de Usuario</h1>
+                <p class="page-subtitle">Gestiona tus solicitudes de recolección de reciclaje</p>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('misSolicitudes')">Mis Solicitudes</button>
+                    <button class="tab" onclick="switchTab('historial')">Historial</button>
+                </div>
+
+                <div class="live-tracking" id="liveTracking" style="display: none;">
+                    <div class="tracking-status">Reciclador en camino</div>
+                    <div class="eta">Tiempo estimado: 15 minutos</div>
+                    <div style="margin-top: 10px;">📍 A 2.5 km de distancia</div>
+                </div>
+
+                <div id="solicitudesActivas">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2>Solicitudes Activas</h2>
+                        <button class="new-request-btn" onclick="openModal('newRequestModal')">
+                            <span>⭐</span> Nueva Solicitud
+                        </button>
+                    </div>
+
+                    <div class="request-card">
+                        <div class="request-header">
+                            <div>
+                                <div class="materials">Cartón, Metal</div>
+                                <div class="status-badge">Pendiente</div>
+                            </div>
+                        </div>
+                        <div class="request-info">
+                            <div class="info-item">📍 carrera 33</div>
+                            <div class="info-item">📅 23/8/2025</div>
+                            <div class="info-item">📦 Cantidad: mediana</div>
+                            <div class="info-item">🕕 Hora preferida: 6 am</div>
+                            <div class="info-item">📝 la paz</div>
+                        </div>
+                        <button class="btn-primary" style="margin-top: 15px; padding: 10px;" onclick="startTracking()">
+                            Ver en tiempo real
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Reciclador -->
+            <div id="recyclerPanel" class="main-content hidden">
+                <h1 class="page-title">Panel de Reciclador</h1>
+                <p class="page-subtitle">Puntos de recolección disponibles</p>
+
+                <div class="map-container">
+                    <div style="text-align: center; color: #6b7280;">
+                        🗺️<br>
+                        Mapa de Barrancabermeja<br>
+                        <small>Mostrando puntos de recolección</small>
+                    </div>
+                </div>
+
+                <div class="pickup-points">
+                    <div class="pickup-point available">
+                        <div class="point-header">
+                            <div class="point-materials">Cartón, Metal</div>
+                            <div class="distance">0.8 km</div>
+                        </div>
+                        <div class="point-info">📍 Carrera 33 - La Paz</div>
+                        <div class="point-info">📦 Cantidad: Mediana</div>
+                        <div class="point-info">🕕 Preferida: 6:00 AM</div>
+                        <div class="point-info">👤 Usuario: Jose</div>
+                        <button class="collect-btn" onclick="acceptCollection(this)">Aceptar Recolección</button>
+                    </div>
+
+                    <div class="pickup-point">
+                        <div class="point-header">
+                            <div class="point-materials">Plástico, Papel</div>
+                            <div class="distance">1.2 km</div>
+                        </div>
+                        <div class="point-info">📍 Calle 45 - Centro</div>
+                        <div class="point-info">📦 Cantidad: Grande</div>
+                        <div class="point-info">🕘 Preferida: 9:00 AM</div>
+                        <div class="point-info">👤 Usuario: María</div>
+                        <button class="collect-btn" onclick="acceptCollection(this)">Aceptar Recolección</button>
+                    </div>
+
+                    <div class="pickup-point">
+                        <div class="point-header">
+                            <div class="point-materials">Aluminio, Pasta</div>
+                            <div class="distance">2.1 km</div>
+                        </div>
+                        <div class="point-info">📍 Barrio El Recreo</div>
+                        <div class="point-info">📦 Cantidad: Pequeña</div>
+                        <div class="point-info">🕐 Preferida: 1:00 PM</div>
+                        <div class="point-info">👤 Usuario: Carlos</div>
+                        <button class="collect-btn" onclick="acceptCollection(this)">Aceptar Recolección</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Nueva Solicitud -->
+        <div id="newRequestModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Nueva Solicitud de Recolección</h3>
+                    <button class="close-btn" onclick="closeModal('newRequestModal')">✕</button>
+                </div>
+
+                <div class="input-group">
+                    <label>Materiales a reciclar</label>
+                    <div class="materials-grid">
+                        <div class="material-option">
+                            <input type="checkbox" id="carton" value="Cartón">
+                            <label for="carton">Cartón</label>
+                        </div>
+                        <div class="material-option">
+                            <input type="checkbox" id="plastico" value="Plástico">
+                            <label for="plastico">Plástico</label>
+                        </div>
+                        <div class="material-option">
+                            <input type="checkbox" id="metal" value="Metal">
+                            <label for="metal">Metal</label>
+                        </div>
+                        <div class="material-option">
+                            <input type="checkbox" id="papel" value="Papel">
+                            <label for="papel">Papel</label>
+                        </div>
+                        <div class="material-option">
+                            <input type="checkbox" id="aluminio" value="Aluminio">
+                            <label for="aluminio">Aluminio</label>
+                        </div>
+                        <div class="material-option">
+                            <input type="checkbox" id="pet" value="Pet">
+                            <label for="pet">Pet</label>
+                        </div>
+                        <div class="material-option">
+                            <input type="checkbox" id="pasta" value="Pasta">
+                            <label for="pasta">Pasta</label>
+                        </div>
+                        <div class="material-option">
+                            <input type="checkbox" id="plegadiza" value="Plegadiza">
+                            <label for="plegadiza">Plegadiza</label>
+                        </div>
+                        <div class="material-option">
+                            <input type="checkbox" id="otros" value="Otros">
+                            <label for="otros">Otros</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group quantity-selector">
+                    <label>Cantidad estimada</label>
+                    <select class="select-field">
+                        <option>Pequeña</option>
+                        <option selected>Mediana</option>
+                        <option>Grande</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" class="input-field" placeholder="Dirección de recolección *" required>
+                </div>
+
+                <div class="input-group">
+                    <input type="time" class="input-field" placeholder="Hora preferida (opcional)">
+                </div>
+
+                <div class="input-group">
+                    <textarea class="input-field" rows="3" placeholder="Descripción adicional (opcional)"></textarea>
+                </div>
+
+                <button class="btn-primary" onclick="crearSolicitud()">Crear Solicitud</button>
+            </div>
+        </div>
+
+        <!-- Panel de Notificaciones -->
+        <div id="notificationPanel" class="notification-panel">
+            <h3 style="margin-bottom: 20px;">Notificaciones</h3>
+            
+            <div class="notification-item">
+                <div class="notification-title">Reciclador asignado</div>
+                <div class="notification-message">Tu solicitud ha sido aceptada por un reciclador</div>
+                <div class="notification-time">Hace 5 minutos</div>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-title">En camino</div>
+                <div class="notification-message">El reciclador está en camino a tu ubicación</div>
+                <div class="notification-time">Hace 2 minutos</div>
+            </div>
+            
+            <div class="notification-item">
+                <div class="notification-title">Recolección completada</div>
+                <div class="notification-message">Tu solicitud anterior fue completada exitosamente</div>
+                <div class="notification-time">Ayer</div>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- Toasts -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50"></div>
+    <script>
+        // Variables globales
+        let currentRole = 'usuario';
+        let currentUser = null;
+        let trackingInterval = null;
+        let notifications = [];
 
-</body>
-</html>
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simular notificaciones en tiempo real
+            setInterval(checkForNotifications, 30000); // Cada 30 segundos
+        });
+
+        // Gestión de roles
+        document.querySelectorAll('.role-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                currentRole = this.dataset.role;
+            });
+        });
+
+        // Funciones de autenticación
+        function crearUsuario() {
+            const nombre = document.getElementById('nombreCompleto').value;
+            const email = document.getElementById('email').value;
+            const telefono = document.getElementById('telefono').value;
+            const direccion = document.getElementById('direccion').value;
+
+            if (!nombre || !email || !telefono) {
+                alert('Por favor completa todos los campos obligatorios');
+                return;
+            }
+
+            currentUser = {
+                nombre: nombre,
+                email: email,
+                telefono: telefono,
+                direccion: direccion,
+                role: currentRole
+            };
+
+            document.getElementById('userName').textContent = nombre.split(' ')[0];
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainPanel').classList.remove('hidden');
+
+            if (currentRole === 'reciclador') {
+                document.getElementById('userPanel').classList.add('hidden');
+                document.getElementById('recyclerPanel').classList.remove('hidden');
+            }
+
+            // Mostrar notificación de bienvenida
+            showNotification('¡Bienvenido!', `Tu cuenta como ${currentRole} ha sido creada exitosamente`);
+        }
+
+        function cancelar() {
+            // Limpiar formulario
+            document.querySelectorAll('.input-field').forEach(input => input.value = '');
+        }
+
+        // Gestión de pestañas
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Aquí podrías cambiar el contenido según la pestaña
+            if (tabName === 'historial') {
+                // Mostrar historial
+                console.log('Mostrando historial');
+            }
+        }
+
+        // Gestión de modales
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Crear nueva solicitud
+        function crearSolicitud() {
+            const materiales = [];
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                materiales.push(checkbox
