@@ -902,4 +902,373 @@
         function crearSolicitud() {
             const materiales = [];
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-                materiales.push(checkbox
+                materiales.push(checkbox.value);
+            });
+
+            if (materiales.length === 0) {
+                alert('Por favor selecciona al menos un material');
+                return;
+            }
+
+            const direccion = document.querySelector('#newRequestModal input[placeholder*="Dirección"]').value;
+            if (!direccion) {
+                alert('Por favor ingresa la dirección de recolección');
+                return;
+            }
+
+            // Crear nueva solicitud
+            const nuevaSolicitud = {
+                id: Date.now(),
+                materiales: materiales.join(', '),
+                direccion: direccion,
+                cantidad: document.querySelector('#newRequestModal select').value,
+                hora: document.querySelector('#newRequestModal input[type="time"]').value || 'No especificada',
+                descripcion: document.querySelector('#newRequestModal textarea').value || 'Sin descripción',
+                estado: 'Pendiente',
+                fecha: new Date().toLocaleDateString('es-CO')
+            };
+
+            // Agregar la solicitud al panel
+            agregarSolicitudAlPanel(nuevaSolicitud);
+
+            // Cerrar modal
+            closeModal('newRequestModal');
+
+            // Limpiar formulario
+            document.querySelectorAll('#newRequestModal input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('#newRequestModal input, #newRequestModal textarea').forEach(input => input.value = '');
+
+            // Mostrar notificación
+            showNotification('Solicitud creada', 'Tu solicitud de recolección ha sido enviada exitosamente');
+
+            // Simular que un reciclador acepta la solicitud después de unos segundos
+            setTimeout(() => {
+                showNotification('Solicitud aceptada', 'Un reciclador ha aceptado tu solicitud');
+                setTimeout(() => {
+                    showNotification('En camino', 'El reciclador está en camino a tu ubicación');
+                    document.getElementById('liveTracking').style.display = 'block';
+                }, 5000);
+            }, 10000);
+        }
+
+        // Agregar solicitud al panel
+        function agregarSolicitudAlPanel(solicitud) {
+            const solicitudesContainer = document.getElementById('solicitudesActivas');
+            const nuevaCard = document.createElement('div');
+            nuevaCard.className = 'request-card';
+            nuevaCard.innerHTML = `
+                <div class="request-header">
+                    <div>
+                        <div class="materials">${solicitud.materiales}</div>
+                        <div class="status-badge">${solicitud.estado}</div>
+                    </div>
+                </div>
+                <div class="request-info">
+                    <div class="info-item">📍 ${solicitud.direccion}</div>
+                    <div class="info-item">📅 ${solicitud.fecha}</div>
+                    <div class="info-item">📦 Cantidad: ${solicitud.cantidad}</div>
+                    <div class="info-item">🕕 Hora preferida: ${solicitud.hora}</div>
+                    <div class="info-item">📝 ${solicitud.descripcion}</div>
+                </div>
+                <button class="btn-primary" style="margin-top: 15px; padding: 10px;" onclick="startTracking()">
+                    Ver en tiempo real
+                </button>
+            `;
+            
+            // Insertar después del botón "Nueva Solicitud"
+            const headerDiv = solicitudesContainer.querySelector('div');
+            solicitudesContainer.insertBefore(nuevaCard, headerDiv.nextSibling);
+        }
+
+        // Seguimiento en tiempo real
+        function startTracking() {
+            document.getElementById('liveTracking').style.display = 'block';
+            
+            let timeRemaining = 15;
+            let distance = 2.5;
+            
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+            }
+            
+            trackingInterval = setInterval(() => {
+                timeRemaining -= 1;
+                distance -= 0.2;
+                
+                if (timeRemaining <= 0 || distance <= 0) {
+                    document.querySelector('.tracking-status').textContent = 'Reciclador ha llegado';
+                    document.querySelector('.eta').textContent = 'Recolección en progreso';
+                    document.querySelector('#liveTracking div:last-child').textContent = '📍 En tu ubicación';
+                    
+                    showNotification('Llegada', 'El reciclador ha llegado a tu ubicación');
+                    
+                    setTimeout(() => {
+                        document.querySelector('.tracking-status').textContent = 'Recolección completada';
+                        document.querySelector('.eta').textContent = 'Gracias por reciclar con nosotros';
+                        document.querySelector('#liveTracking div:last-child').textContent = '✅ Materiales recolectados';
+                        showNotification('Completado', 'Tu recolección ha sido completada exitosamente');
+                        
+                        // Actualizar estado de la solicitud
+                        setTimeout(() => {
+                            document.getElementById('liveTracking').style.display = 'none';
+                        }, 5000);
+                    }, 8000);
+                    
+                    clearInterval(trackingInterval);
+                } else {
+                    document.querySelector('.eta').textContent = `Tiempo estimado: ${timeRemaining} minutos`;
+                    document.querySelector('#liveTracking div:last-child').textContent = `📍 A ${distance.toFixed(1)} km de distancia`;
+                }
+            }, 1000);
+        }
+
+        // Gestión para recicladores
+        function acceptCollection(button) {
+            const pointCard = button.closest('.pickup-point');
+            pointCard.style.border = '2px solid #10b981';
+            pointCard.style.background = '#ecfdf5';
+            
+            button.textContent = 'Recolección Aceptada';
+            button.style.background = '#059669';
+            button.disabled = true;
+            
+            const materials = pointCard.querySelector('.point-materials').textContent;
+            const location = pointCard.querySelector('.point-info').textContent.replace('📍 ', '');
+            
+            showNotification('Recolección aceptada', `Has aceptado recoger ${materials} en ${location}`);
+            
+            // Simular navegación/ruta
+            setTimeout(() => {
+                showNotification('Ruta iniciada', 'Navegación activada hacia el punto de recolección');
+            }, 2000);
+            
+            // Simular llegada y completación
+            setTimeout(() => {
+                button.textContent = 'Completada ✓';
+                button.style.background = '#10b981';
+                showNotification('Recolección completada', 'Has completado la recolección exitosamente');
+                
+                // Remover el punto después de completar
+                setTimeout(() => {
+                    pointCard.style.opacity = '0.5';
+                    pointCard.style.transform = 'scale(0.95)';
+                }, 2000);
+            }, 15000);
+        }
+
+        // Sistema de notificaciones
+        function showNotification(title, message) {
+            const notification = {
+                id: Date.now(),
+                title: title,
+                message: message,
+                time: new Date(),
+                read: false
+            };
+            
+            notifications.unshift(notification);
+            updateNotificationPanel();
+            
+            // Animación del botón de notificación
+            const notificationBtn = document.querySelector('.notification-btn');
+            notificationBtn.style.animation = 'pulse 0.5s ease-in-out';
+            setTimeout(() => {
+                notificationBtn.style.animation = '';
+            }, 500);
+            
+            // Mostrar notificación temporal
+            showTempNotification(title, message);
+        }
+
+        function showTempNotification(title, message) {
+            const tempNotification = document.createElement('div');
+            tempNotification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                border: 2px solid #10b981;
+                border-radius: 12px;
+                padding: 15px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                z-index: 2000;
+                max-width: 300px;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            
+            tempNotification.innerHTML = `
+                <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;">${title}</div>
+                <div style="color: #6b7280; font-size: 14px;">${message}</div>
+            `;
+            
+            document.body.appendChild(tempNotification);
+            
+            setTimeout(() => {
+                tempNotification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => {
+                    document.body.removeChild(tempNotification);
+                }, 300);
+            }, 4000);
+        }
+
+        function updateNotificationPanel() {
+            const panel = document.getElementById('notificationPanel');
+            const container = panel.querySelector('div:not(:first-child)')?.parentElement || panel;
+            
+            // Limpiar notificaciones existentes (excepto el título)
+            const existingNotifications = panel.querySelectorAll('.notification-item');
+            existingNotifications.forEach(item => item.remove());
+            
+            // Agregar nuevas notificaciones
+            notifications.slice(0, 10).forEach(notification => {
+                const notificationElement = document.createElement('div');
+                notificationElement.className = 'notification-item';
+                
+                const timeAgo = getTimeAgo(notification.time);
+                
+                notificationElement.innerHTML = `
+                    <div class="notification-title">${notification.title}</div>
+                    <div class="notification-message">${notification.message}</div>
+                    <div class="notification-time">${timeAgo}</div>
+                `;
+                
+                panel.appendChild(notificationElement);
+            });
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffInMinutes = Math.floor((now - date) / (1000 * 60));
+            
+            if (diffInMinutes < 1) return 'Ahora';
+            if (diffInMinutes < 60) return `Hace ${diffInMinutes} minutos`;
+            if (diffInMinutes < 1440) return `Hace ${Math.floor(diffInMinutes / 60)} horas`;
+            return `Hace ${Math.floor(diffInMinutes / 1440)} días`;
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('active');
+        }
+
+        // Función para simular llegada de nuevas solicitudes (para recicladores)
+        function checkForNotifications() {
+            if (currentRole === 'reciclador') {
+                // Simular nuevas solicitudes ocasionalmente
+                if (Math.random() > 0.7) {
+                    const locations = ['Barrio Nueva Colombia', 'Centro Histórico', 'La Libertad', 'El Recreo'];
+                    const materials = ['Cartón, Papel', 'Plástico, Pet', 'Metal, Aluminio', 'Pasta, Plegadiza'];
+                    
+                    const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+                    const randomMaterials = materials[Math.floor(Math.random() * materials.length)];
+                    
+                    showNotification('Nueva solicitud', `${randomMaterials} disponible en ${randomLocation}`);
+                }
+            } else {
+                // Notificaciones para usuarios ocasionalmente
+                if (Math.random() > 0.8) {
+                    const updates = [
+                        'Tu solicitud está siendo revisada',
+                        'Nuevos recicladores disponibles en tu zona',
+                        'Recordatorio: tienes una recolección pendiente'
+                    ];
+                    const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
+                    showNotification('Actualización', randomUpdate);
+                }
+            }
+        }
+
+        // Cerrar panel de notificaciones al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('notificationPanel');
+            const notificationBtn = document.querySelector('.notification-btn');
+            
+            if (!panel.contains(e.target) && !notificationBtn.contains(e.target)) {
+                panel.classList.remove('active');
+            }
+        });
+
+        // Cerrar modales al hacer clic fuera
+        document.addEventListener('click', function(e) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Animaciones CSS adicionales
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.1); background: rgba(255,255,255,0.4); }
+                100% { transform: scale(1); }
+            }
+
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+
+            .request-card:hover .btn-primary {
+                background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            }
+
+            .pickup-point.completed {
+                opacity: 0.6;
+                pointer-events: none;
+            }
+
+            .notification-btn {
+                position: relative;
+            }
+
+            .notification-btn::after {
+                content: '';
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                width: 8px;
+                height: 8px;
+                background: #ef4444;
+                border-radius: 50%;
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .notification-btn.has-notifications::after {
+                opacity: 1;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Inicializar notificaciones predeterminadas
+        setTimeout(() => {
+            if (currentRole === 'usuario') {
+                showNotification('Bienvenido', 'Puedes crear tu primera solicitud de recolección');
+            } else {
+                showNotification('Reciclador activo', 'Estás listo para recibir solicitudes de recolección');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
